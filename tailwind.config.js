@@ -7,6 +7,11 @@ module.exports = {
     ],
     plugins: [require('flowbite/plugin')],
     theme: {
-        extend: {},
+        extend: {
+            fontFamily: {
+                display: ['Nunito', 'sans-serif'],
+                body: ['Poppins', 'sans-serif'],
+            },
+        }
     },
 }
