@@ -1,0 +1,23 @@
+{
+    "name": "veritru",
+    "version": "0.1.0",
+    "author": "Mark Christian Tan",
+    "description": "VeriTru is a web application that uses blockchain technology to utilize its decentralization, security, and immutability of records to combat the spread of fake news by creating a platform that stores and retains all fact-checked news articles or contents.",
+    "private": true,
+    "scripts": {
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start",
+        "lint": "next lint"
+    },
+    "dependencies": {
+        "@next/font": "13.1.6",
+        "@truffle/hdwallet-provider": "^2.0.15",
+        "dotenv": "^16.0.3",
+        "eslint": "8.33.0",
+        "eslint-config-next": "13.1.6",
+        "next": "13.1.6",
+        "react": "18.2.0",
+        "react-dom": "18.2.0"
+    }
+}
