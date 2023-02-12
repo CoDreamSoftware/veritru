@@ -1,6 +1,7 @@
 import Image from 'next/image'
-
 import logo from "../../public/SVG/veritru-sq-white.svg"
+
+import { Button } from '@chakra-ui/react'
 
 function NavbarMenu() {
 
@@ -11,6 +12,7 @@ function NavbarMenu() {
                 <Image src={logo} className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" priority />
                     <span className="self-center whitespace-nowrap text-xl font-bold dark:text-white font-display ml-2">veritru</span>
             </div>
+            <Button colorScheme='blue'>Button</Button>
         </>
     )
 }
