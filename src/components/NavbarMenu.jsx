@@ -3,7 +3,7 @@ import { Navbar } from 'flowbite-react'
 
 import logo from "../../public/SVG/veritru-sq-white.svg"
 
-export default function NavbarMenu() {
+function NavbarMenu() {
     return (
         <Navbar fluid={true} rounded={true}>
             <Navbar.Brand>
@@ -38,3 +38,5 @@ export default function NavbarMenu() {
         </Navbar>
     )
 }
+
+export default NavbarMenu
