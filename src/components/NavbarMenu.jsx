@@ -7,7 +7,7 @@ import { Transition } from '@headlessui/react';
 import { useDisclosure } from '@chakra-ui/react';
 
 // components
-import GetStartedModal from './GetStartedModal';
+import GetStartedModal from '@components/GetStartedModal';
 
 function NavbarMenu() {
     const [navOpen, setNavOpen] = useState(false)
