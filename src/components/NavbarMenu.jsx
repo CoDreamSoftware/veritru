@@ -1,11 +1,17 @@
 import Link from 'next/link'
 import Image from 'next/image'
+
+// pckgs
 import { useState } from 'react';
 import { Transition } from '@headlessui/react';
-import logo from '../../public/SVG/veritru-sq-white.svg'
+import { useDisclosure } from '@chakra-ui/react';
+
+// components
+import GetStartedModal from './GetStartedModal';
 
 function NavbarMenu() {
-    const [navOpen, setNavOpen] = useState(false);
+    const [navOpen, setNavOpen] = useState(false)
+    const { isOpen, onOpen, onClose } = useDisclosure()
 
     return (
         <>
@@ -14,7 +20,7 @@ function NavbarMenu() {
                     <div className="flex items-center h-20 w-full">
                         <div className="flex items-center mx-10 md:mx-20 justify-between w-full">
                             <div className="flex justify-center items-center flex-shrink-0 ">
-                                <Image src={logo} className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" priority />
+                                <Image src="/svg/veritru-sq-white.svg" className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" width="48" height="48" priority />
                                 <span className="self-center whitespace-nowrap text-xl font-bold dark:text-white font-display ml-2">veritru</span>
                             </div>
                             <div className="hidden md:block">
@@ -48,6 +54,7 @@ function NavbarMenu() {
                                     </Link>
 
                                     <button 
+                                        onClick={onOpen}
                                         type="button" 
                                         className="font-display font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg text-sm px-5 py-2.5 text-center"
                                     >
@@ -148,6 +155,7 @@ function NavbarMenu() {
                                 </Link>
 
                                 <button 
+                                    onClick={onOpen}
                                     type="button" 
                                     className="font-display font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg text-sm px-5 py-2.5 w-full text-center"
                                 >
@@ -158,6 +166,10 @@ function NavbarMenu() {
                     )}
                 </Transition>
             </nav>
+
+            <main>
+                <GetStartedModal isOpen={isOpen} onClose={onClose} />
+            </main>
         </>
     )
 }
