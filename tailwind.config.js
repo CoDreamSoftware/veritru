@@ -9,8 +9,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                display: ['Nunito', 'sans-serif'],
-                body: ['Poppins', 'sans-serif'],
+                display: ['Poppins']
             },
         }
     },
