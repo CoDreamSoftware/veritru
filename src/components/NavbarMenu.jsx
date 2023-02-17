@@ -21,34 +21,34 @@ function NavbarMenu() {
                         <div className="flex items-center mx-10 md:mx-20 justify-between w-full">
                             <div className="flex justify-center items-center flex-shrink-0 ">
                                 <Image src="/svg/veritru-sq-white.svg" className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" width="48" height="48" priority />
-                                <span className="self-center whitespace-nowrap text-xl font-bold dark:text-white font-display ml-2">veritru</span>
+                                <span className="self-center whitespace-nowrap text-xl font-medium font-display dark:text-white ml-2">veritru</span>
                             </div>
                             <div className="hidden md:block">
                                 <div className="ml-10 flex items-baseline space-x-4">
                                     <Link
                                         href="#"
-                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-medium"
+                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
                                     >
                                         Home
                                     </Link>
 
                                     <Link
                                         href="#"
-                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-medium"
+                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
                                     >
                                         Guides
                                     </Link>
 
                                     <Link
                                         href="#"
-                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-medium"
+                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
                                     >
                                         Whitepaper
                                     </Link>
 
                                     <Link
                                         href="#"
-                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-medium"
+                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
                                     >
                                         Contact
                                     </Link>
@@ -56,7 +56,7 @@ function NavbarMenu() {
                                     <button 
                                         onClick={onOpen}
                                         type="button" 
-                                        className="font-display font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg text-sm px-5 py-2.5 text-center"
+                                        className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
                                     >
                                         Get Started
                                     </button>
@@ -128,28 +128,28 @@ function NavbarMenu() {
                             >
                                 <Link
                                     href="#"
-                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
                                 >
                                     Home
                                 </Link>
                                 
                                 <Link
                                     href="#"
-                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
                                 >
                                     Guides
                                 </Link>
 
                                 <Link
                                     href="#"
-                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
                                 >
                                     Whitepaper
                                 </Link>
 
                                 <Link
                                     href="#"
-                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
                                 >
                                     Contact
                                 </Link>
@@ -157,7 +157,7 @@ function NavbarMenu() {
                                 <button 
                                     onClick={onOpen}
                                     type="button" 
-                                    className="font-display font-bold text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg text-sm px-5 py-2.5 w-full text-center"
+                                    className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 w-full text-center text-base font-medium font-display"
                                 >
                                     Get Started
                                 </button>
