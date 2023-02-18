@@ -40,7 +40,9 @@ function GetStartedModal(props) {
                         </p>
                         
                         { error && 
-                            <p className={`mt-4 text-md text-red-600 dark:text-red-400`}>{`Error: ${error}`}</p>
+                            <p className={`mt-4 text-md text-red-600 dark:text-red-400`}>
+                                {`Error: ${error}`}
+                            </p>
                         }
 
                         <div className="p-1">
