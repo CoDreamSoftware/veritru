@@ -2,16 +2,24 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 // pckgs
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { Transition } from '@headlessui/react';
 import { useDisclosure } from '@chakra-ui/react';
+
+// context provider
+import { MetamaskContext } from '@/context/Metamask'
 
 // components
 import GetStartedModal from '@/components/GetStartedModal';
 
+// utils
+import { truncateAddress } from '@/utilities/address.utils';
+
 function NavbarMenu() {
     const [navOpen, setNavOpen] = useState(false)
     const { isOpen, onOpen, onClose } = useDisclosure()
+
+    const { account } = useContext(MetamaskContext)
 
     return (
         <>
@@ -53,13 +61,23 @@ function NavbarMenu() {
                                         Contact
                                     </Link>
 
-                                    <button 
-                                        onClick={onOpen}
-                                        type="button" 
-                                        className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
-                                    >
-                                        Get Started
-                                    </button>
+                                    { account ? null : (
+                                        <button 
+                                            onClick={onOpen}
+                                            type="button" 
+                                            className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
+                                        >
+                                            Get Started
+                                        </button>
+                                    )}
+
+                                    { account &&
+                                        <>
+                                            <p className="font-display">
+                                                { truncateAddress(account) }
+                                            </p>
+                                        </>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -120,50 +138,57 @@ function NavbarMenu() {
                     leaveFrom="opacity-100 scale-100"
                     leaveTo="opacity-0 scale-95"
                 >
-                    {(ref) => (
-                        <div className="md:hidden" id="mobile-menu">
-                            <div
-                                ref={ref}
-                                className="bg-white px-2 pt-2 pb-3 space-y-1 sm:px-3"
+                    <div className="md:hidden" id="mobile-menu">
+                        <div
+                            className="bg-white px-2 pt-2 pb-3 space-y-1 sm:px-3"
+                        >
+                            <Link
+                                href="#"
+                                className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
                             >
-                                <Link
-                                    href="#"
-                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
-                                >
-                                    Home
-                                </Link>
-                                
-                                <Link
-                                    href="#"
-                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
-                                >
-                                    Guides
-                                </Link>
+                                Home
+                            </Link>
+                            
+                            <Link
+                                href="#"
+                                className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
+                            >
+                                Guides
+                            </Link>
 
-                                <Link
-                                    href="#"
-                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
-                                >
-                                    Whitepaper
-                                </Link>
+                            <Link
+                                href="#"
+                                className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
+                            >
+                                Whitepaper
+                            </Link>
 
-                                <Link
-                                    href="#"
-                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
-                                >
-                                    Contact
-                                </Link>
+                            <Link
+                                href="#"
+                                className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
+                            >
+                                Contact
+                            </Link>
 
+                            { account ? null : (
                                 <button 
                                     onClick={onOpen}
                                     type="button" 
-                                    className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 w-full text-center text-base font-medium font-display"
+                                    className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
                                 >
                                     Get Started
                                 </button>
-                            </div>
+                            )}
+
+                            { account &&
+                                <>
+                                    <p className="font-display">
+                                        { truncateAddress(account) }
+                                    </p>
+                                </>
+                            }
                         </div>
-                    )}
+                    </div>
                 </Transition>
             </nav>
 
