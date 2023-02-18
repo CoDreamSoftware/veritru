@@ -39,6 +39,10 @@ function GetStartedModal(props) {
                             or create a new one to continue.
                         </p>
                         
+                        { error && 
+                            <p className={`mt-4 text-md text-red-600 dark:text-red-400`}>{`Error: ${error}`}</p>
+                        }
+
                         <div className="p-1">
                             <ul className="my-4 space-y-3">
                                 <li>
@@ -73,9 +77,6 @@ function GetStartedModal(props) {
                                     </button>
                                 </li>
                             </ul>
-                            { error && 
-                                <p className={`mt-4 text-md text-red-600 dark:text-red-400`}>{`Error: ${error}`}</p>
-                            }
                         </div>
                         
                         <div>
