@@ -14,7 +14,6 @@ import {
 
 function GetStartedModal(props) {
     const { connectWallet, error } = useContext(MetamaskContext)
-    console.log(error)
 
     const onClose = props.onClose
     const isOpen = props.isOpen
