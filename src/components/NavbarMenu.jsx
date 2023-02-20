@@ -4,7 +4,16 @@ import Image from 'next/image'
 // pckgs
 import { useState, useContext } from 'react';
 import { Transition } from '@headlessui/react';
-import { useDisclosure, Avatar } from '@chakra-ui/react';
+import { 
+    useDisclosure, 
+    Avatar, 
+    Button,
+    Menu, 
+    MenuButton, 
+    MenuList, 
+    MenuGroup, 
+    MenuItem 
+} from '@chakra-ui/react';
 
 // context provider
 import { MetamaskContext } from '@/context/Metamask'
@@ -72,17 +81,29 @@ function NavbarMenu() {
                                     )}
 
                                     { account &&
-                                        <div className="flex items-center">
-                                            <p className="font-display mr-2">
-                                                { truncateAddress(account) }
-                                            </p>
-                                            <Avatar 
-                                                size="sm"
-                                                name={truncateAddress(account)} 
-                                                src="https://api.dicebear.com/5.x/shapes/svg?scale=50" 
-                                                alt="avatar" 
-                                            />
-                                        </div>
+                                        <Menu>
+                                            <MenuButton 
+                                                as={Button}
+                                            >
+                                                <div className="flex items-center">
+                                                    <p className="font-display font-normal mr-2">
+                                                        { truncateAddress(account) }
+                                                    </p>
+                                                    <Avatar 
+                                                        size="sm"
+                                                        name={truncateAddress(account)} 
+                                                        src="https://api.dicebear.com/5.x/shapes/svg?scale=50" 
+                                                        alt="avatar" 
+                                                    />
+                                                </div>
+                                            </MenuButton>
+                                            <MenuList>
+                                                <MenuGroup title="Profile">
+                                                    <MenuItem>Account</MenuItem>
+                                                    <MenuItem>Disconnect</MenuItem>
+                                                </MenuGroup>
+                                            </MenuList>
+                                        </Menu>
                                     }
                                 </div>
                             </div>
@@ -144,7 +165,7 @@ function NavbarMenu() {
                     leaveFrom="opacity-100 scale-100"
                     leaveTo="opacity-0 scale-95"
                 >
-                    <div className="md:hidden" id="mobile-menu">
+                    <div className="md:hidden h-full min-h-screen" id="mobile-menu">
                         <div
                             className="bg-white px-2 pt-2 pb-3 space-y-1 sm:px-3"
                         >
@@ -175,31 +196,37 @@ function NavbarMenu() {
                             >
                                 Contact
                             </Link>
+                        </div>
+                        { account ? null : (
+                            <button 
+                                onClick={onOpen}
+                                type="button" 
+                                className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
+                            >
+                                Get Started
+                            </button>
+                        )}
 
-                            { account ? null : (
-                                <button 
-                                    onClick={onOpen}
-                                    type="button" 
-                                    className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
-                                >
-                                    Get Started
-                                </button>
-                            )}
-
-                            { account &&
-                                <div className="flex items-center px-3 py-2">
-                                    <p className="font-display mr-2 font-medium">
-                                        { truncateAddress(account) }
-                                    </p>
+                        { account &&
+                            <>
+                                <div className="flex items-center px-3 py-2 mt-5 mx-5">
                                     <Avatar 
-                                        size="sm"
                                         name={truncateAddress(account)} 
                                         src="https://api.dicebear.com/5.x/shapes/svg?scale=50" 
                                         alt="avatar" 
                                     />
+                                    <p className="font-display ml-2 font-medium">
+                                        { truncateAddress(account) }
+                                    </p>
                                 </div>
-                            }
-                        </div>
+                                <Link
+                                    href="#"
+                                    className="cursor-pointer bg-cyan-500 hover:bg-cyan-600 text-white block px-3 py-2 rounded-md text-base font-medium font-display text-center mx-5 mt-5"
+                                >
+                                    Logout
+                                </Link>
+                            </>
+                        }
                     </div>
                 </Transition>
             </nav>
