@@ -4,7 +4,7 @@ import Image from 'next/image'
 // pckgs
 import { useState, useContext } from 'react';
 import { Transition } from '@headlessui/react';
-import { useDisclosure } from '@chakra-ui/react';
+import { useDisclosure, Avatar } from '@chakra-ui/react';
 
 // context provider
 import { MetamaskContext } from '@/context/Metamask'
@@ -72,11 +72,17 @@ function NavbarMenu() {
                                     )}
 
                                     { account &&
-                                        <>
-                                            <p className="font-display">
+                                        <div className="flex items-center">
+                                            <p className="font-display mr-2">
                                                 { truncateAddress(account) }
                                             </p>
-                                        </>
+                                            <Avatar 
+                                                size="sm"
+                                                name={truncateAddress(account)} 
+                                                src="https://api.dicebear.com/5.x/shapes/svg?scale=50" 
+                                                alt="avatar" 
+                                            />
+                                        </div>
                                     }
                                 </div>
                             </div>
@@ -181,11 +187,17 @@ function NavbarMenu() {
                             )}
 
                             { account &&
-                                <>
-                                    <p className="font-display">
+                                <div className="flex items-center px-3 py-2">
+                                    <p className="font-display mr-2 font-medium">
                                         { truncateAddress(account) }
                                     </p>
-                                </>
+                                    <Avatar 
+                                        size="sm"
+                                        name={truncateAddress(account)} 
+                                        src="https://api.dicebear.com/5.x/shapes/svg?scale=50" 
+                                        alt="avatar" 
+                                    />
+                                </div>
                             }
                         </div>
                     </div>
