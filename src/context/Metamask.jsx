@@ -15,6 +15,7 @@ const MetamaskProvider = ({ children }) => {
         }
         return true
     }
+
     const getConnectedAccounts = async () => {
         setError('')
         try {
@@ -27,6 +28,7 @@ const MetamaskProvider = ({ children }) => {
             setError(err.message)
         }
     }
+
     const connectWallet = async () => {
         setError('')
         if (checkEthereumExists()) {
@@ -42,6 +44,15 @@ const MetamaskProvider = ({ children }) => {
         }
     }
 
+    const refreshErrorState = async () => {
+        setError('')
+    }
+
+    const disconnect = async () => {
+        setError('')
+        setAccount('')
+    }
+
     useEffect(() => {
         if (checkEthereumExists()) {
             ethereum.on('accountsChanged', getConnectedAccounts)
@@ -55,7 +66,7 @@ const MetamaskProvider = ({ children }) => {
     }, [])
 
     return (
-        <MetamaskContext.Provider value={{ account, connectWallet, error }}>
+        <MetamaskContext.Provider value={{ account, connectWallet, error, refreshErrorState, disconnect }}>
             {children}
         </MetamaskContext.Provider>
     )
