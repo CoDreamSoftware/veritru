@@ -28,7 +28,7 @@ function NavbarMenu() {
     const [navOpen, setNavOpen] = useState(false)
     const { isOpen, onOpen, onClose } = useDisclosure()
 
-    const { account } = useContext(MetamaskContext)
+    const { account, disconnect } = useContext(MetamaskContext)
 
     return (
         <>
@@ -100,7 +100,7 @@ function NavbarMenu() {
                                             <MenuList>
                                                 <MenuGroup title="Profile">
                                                     <MenuItem>Account</MenuItem>
-                                                    <MenuItem>Disconnect</MenuItem>
+                                                    <MenuItem onClick={disconnect}>Disconnect</MenuItem>
                                                 </MenuGroup>
                                             </MenuList>
                                         </Menu>
@@ -219,11 +219,11 @@ function NavbarMenu() {
                                         { truncateAddress(account) }
                                     </p>
                                 </div>
-                                <Link
+                                <Link onClick={disconnect}
                                     href="#"
                                     className="cursor-pointer bg-cyan-500 hover:bg-cyan-600 text-white block px-3 py-2 rounded-md text-base font-medium font-display text-center mx-5 mt-5"
                                 >
-                                    Logout
+                                    Disconnect
                                 </Link>
                             </>
                         }
