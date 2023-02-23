@@ -82,7 +82,7 @@ const MetamaskProvider = ({ children }) => {
                 ethereum.removeListener('accountsChanged', isMetamaskConnected)
             }
         }
-    }, [])
+    })
 
     return (
         <MetamaskContext.Provider value={{account, connectWallet, disconnect}}>
