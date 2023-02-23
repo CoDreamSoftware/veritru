@@ -1,15 +1,15 @@
 import { createContext, useEffect, useState } from 'react'
-import { truncateAddress } from '@/utilities/address.utils'
-import { useToast } from '@chakra-ui/react'
+import { truncateAddress } from '@/utilities/address.utils';
+import { useToast } from '@chakra-ui/react';
 
 export const MetamaskContext = createContext()
 
 const { ethereum } = typeof window !== 'undefined' ? window : {}
 
 const MetamaskProvider = ({ children }) => {
+    const [disconnected, setDisconnected] = useState(false)
     const [account, setAccount] = useState('')
-    const [connected, setConnected] = useState(false)
-
+    
     const toast = useToast()
     const successMessage = (value) => {
         toast({
@@ -18,7 +18,7 @@ const MetamaskProvider = ({ children }) => {
             status: 'success',
             duration: 3000,
             isClosable: true,
-            position: 'top',
+            position: 'bottom-right',
         })
     }
     const errorMessage = (value) => {
@@ -28,7 +28,7 @@ const MetamaskProvider = ({ children }) => {
             status: 'error',
             duration: 3000,
             isClosable: true,
-            position: 'top',
+            position: 'bottom-right',
         })
     }
 
@@ -40,16 +40,12 @@ const MetamaskProvider = ({ children }) => {
         return true
     }
 
-    const disconnect = () => {
-        setAccount('')
-        setConnected(false)
-    }
-
     const isMetamaskConnected = async () => {
         try {
             const accounts = await ethereum.request({
-                method: 'eth_accounts'
+                method: 'eth_accounts',
             })
+            console.log(accounts)
             setAccount(accounts[0])
         } catch (err) {
             errorMessage(err.message)
@@ -57,18 +53,23 @@ const MetamaskProvider = ({ children }) => {
     }
 
     const connectWallet = async () => {
-        if (isMetamaskInstalled() ) {
+        if (isMetamaskInstalled()) {
             try {
                 const accounts = await ethereum.request({
-                    method: 'eth_requestAccounts'
+                    method: 'eth_requestAccounts',
                 })
+                console.log(accounts)
                 setAccount(accounts[0])
-                setConnected(true)
-                successMessage(truncateAddress(accounts[0]))
+                successMessage(truncateAddress(accounts[0])) 
             } catch (err) {
                 errorMessage(err.message)
             }
         }
+    }
+
+    const disconnect = () => {
+        setAccount('')
+        setDisconnected(true)
     }
 
     useEffect(() => {
@@ -81,7 +82,7 @@ const MetamaskProvider = ({ children }) => {
                 ethereum.removeListener('accountsChanged', isMetamaskConnected)
             }
         }
-    }, [connected])
+    })
 
     return (
         <MetamaskContext.Provider value={{account, connectWallet, disconnect}}>
