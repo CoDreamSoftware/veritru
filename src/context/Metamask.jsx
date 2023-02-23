@@ -17,7 +17,7 @@ const MetamaskProvider = ({ children }) => {
     }
 
     const getConnectedAccounts = async () => {
-        setError('')
+        initErrorState()
         try {
             const accounts = await ethereum.request({
                 method: 'eth_accounts',
@@ -30,7 +30,7 @@ const MetamaskProvider = ({ children }) => {
     }
 
     const connectWallet = async () => {
-        setError('')
+        initErrorState()
         if (checkEthereumExists()) {
             try {
                 const accounts = await ethereum.request({
@@ -42,6 +42,10 @@ const MetamaskProvider = ({ children }) => {
                 setError(err.message)
             }
         }
+    }
+
+    const initErrorState = async () => {
+        setError('')
     }
 
     const disconnect = async () => {
@@ -62,7 +66,7 @@ const MetamaskProvider = ({ children }) => {
     }, [])
 
     return (
-        <MetamaskContext.Provider value={{ account, connectWallet, error, disconnect }}>
+        <MetamaskContext.Provider value={{ account, connectWallet, initErrorState, error, disconnect }}>
             {children}
         </MetamaskContext.Provider>
     )

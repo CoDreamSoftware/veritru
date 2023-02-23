@@ -15,7 +15,7 @@ import {
 
 function GetStartedModal(props) {
     const context = useContext(MetamaskContext)
-    const {error} = useContext(MetamaskContext)
+    const {account, error} = useContext(MetamaskContext)
 
     const onClose = props.onClose
     const isOpen = props.isOpen
@@ -25,7 +25,7 @@ function GetStartedModal(props) {
     const handleConnect = () => {
         context.connectWallet()
             .then(() => {
-                if (error) {
+                if (!account && error) {
                     toast({
                         title: 'Success',
                         description: 'Wallet Connected!',
@@ -43,6 +43,7 @@ function GetStartedModal(props) {
                         isClosable: true,
                         position: 'top-right',
                     })
+                    context.initErrorState()
                 }
             })
     }
