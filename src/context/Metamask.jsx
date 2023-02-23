@@ -44,10 +44,6 @@ const MetamaskProvider = ({ children }) => {
         }
     }
 
-    const refreshErrorState = async () => {
-        setError('')
-    }
-
     const disconnect = async () => {
         setError('')
         setAccount('')
@@ -66,7 +62,7 @@ const MetamaskProvider = ({ children }) => {
     }, [])
 
     return (
-        <MetamaskContext.Provider value={{ account, connectWallet, error, refreshErrorState, disconnect }}>
+        <MetamaskContext.Provider value={{ account, connectWallet, error, disconnect }}>
             {children}
         </MetamaskContext.Provider>
     )
