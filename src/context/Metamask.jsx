@@ -10,22 +10,12 @@ const MetamaskProvider = ({ children }) => {
     const [account, setAccount] = useState('')
     const [connected, setConnected] = useState(false)
 
-    const toast = useToast()
-    const successMessage = (value) => {
-        toast({
-            title: 'Success',
-            description: `Connected to ${value}`,
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-            position: 'top',
-        })
-    }
-    const errorMessage = (value) => {
-        toast({
-            title: 'Error',
-            description: `${value}`,
-            status: 'error',
+    const toaster = useToast()
+    const toast = (value) => {
+        toaster({
+            title: value.title,
+            description: value.msg,
+            status: value.stats,
             duration: 3000,
             isClosable: true,
             position: 'top',
@@ -34,7 +24,11 @@ const MetamaskProvider = ({ children }) => {
 
     const isMetamaskInstalled = () => {
         if (!ethereum) {
-            errorMessage('Please Install MetaMask.')
+            toast({
+                title: 'Error!', 
+                msg: 'Please Install MetaMask.', 
+                stats: 'error'
+            })
             return false
         }
         return true
@@ -52,7 +46,11 @@ const MetamaskProvider = ({ children }) => {
             })
             setAccount(accounts[0])
         } catch (err) {
-            errorMessage(err.message)
+            toast({
+                title: 'Error!', 
+                msg: `${err.message}`, 
+                stats: 'error'
+            })
         }
     }
 
@@ -64,9 +62,17 @@ const MetamaskProvider = ({ children }) => {
                 })
                 setAccount(accounts[0])
                 setConnected(true)
-                successMessage(truncateAddress(accounts[0]))
+                toast({
+                    title: 'Success!', 
+                    msg: `Connected to ${truncateAddress(accounts[0])}`, 
+                    stats: 'success'
+                })
             } catch (err) {
-                errorMessage(err.message)
+                toast({
+                    title: 'Error!', 
+                    msg: `${err.message}`, 
+                    stats: 'error'
+                })
             }
         }
     }
