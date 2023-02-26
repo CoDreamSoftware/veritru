@@ -1,9 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
-
-// pckgs
-import { useState, useContext } from 'react';
-import { Transition } from '@headlessui/react';
+import { useEffect, useState } from 'react'
+import { Transition } from '@headlessui/react'
 import { 
     useDisclosure, 
     Avatar, 
@@ -13,22 +11,16 @@ import {
     MenuList, 
     MenuGroup, 
     MenuItem 
-} from '@chakra-ui/react';
-
-// context provider
-import { MetamaskContext } from '@/context/Metamask'
-
-// components
-import GetStartedModal from '@/components/GetStartedModal';
-
-// utils
-import { truncateAddress } from '@/utilities/address.utils';
+} from '@chakra-ui/react'
+import { truncateAddress } from '@/utilities/address.utils'
+import GetStartedModal from '@/components/GetStartedModal'
+import { useAccount, useDisconnect } from 'wagmi'
 
 function NavbarMenu() {
     const [navOpen, setNavOpen] = useState(false)
     const { isOpen, onOpen, onClose } = useDisclosure()
-
-    const { account, disconnect } = useContext(MetamaskContext)
+    const { address, isConnected } = useAccount()
+    const { disconnect } = useDisconnect()
 
     return (
         <>
@@ -70,7 +62,7 @@ function NavbarMenu() {
                                         Contact
                                     </Link>
 
-                                    { account ? null : (
+                                    { !isConnected &&
                                         <button 
                                             onClick={onOpen}
                                             type="button" 
@@ -78,20 +70,20 @@ function NavbarMenu() {
                                         >
                                             Get Started
                                         </button>
-                                    )}
+                                    }
 
-                                    { account &&
+                                    { isConnected &&
                                         <Menu>
                                             <MenuButton 
                                                 as={Button}
                                             >
                                                 <div className="flex items-center">
                                                     <p className="font-display font-normal mr-2">
-                                                        { truncateAddress(account) }
+                                                        { truncateAddress(address) }
                                                     </p>
                                                     <Avatar 
                                                         size="sm"
-                                                        name={truncateAddress(account)} 
+                                                        name={truncateAddress(address)} 
                                                         src="https://api.dicebear.com/5.x/shapes/svg?scale=50" 
                                                         alt="avatar" 
                                                     />
@@ -197,7 +189,7 @@ function NavbarMenu() {
                                 Contact
                             </Link>
                         </div>
-                        { account ? null : (
+                        { !isConnected &&
                             <button 
                                 onClick={onOpen}
                                 type="button" 
@@ -205,21 +197,22 @@ function NavbarMenu() {
                             >
                                 Get Started
                             </button>
-                        )}
+                        }
 
-                        { account &&
+                        { isConnected &&
                             <>
                                 <div className="flex items-center px-3 py-2 mt-5 mx-5">
                                     <Avatar 
-                                        name={truncateAddress(account)} 
+                                        name={truncateAddress(address)} 
                                         src="https://api.dicebear.com/5.x/shapes/svg?scale=50" 
                                         alt="avatar" 
                                     />
                                     <p className="font-display ml-2 font-medium">
-                                        { truncateAddress(account) }
+                                        { truncateAddress(address) }
                                     </p>
                                 </div>
-                                <Link onClick={disconnect}
+                                <Link 
+                                    onClick={disconnect}
                                     href="#"
                                     className="cursor-pointer bg-cyan-500 hover:bg-cyan-600 text-white block px-3 py-2 rounded-md text-base font-medium font-display text-center mx-5 mt-5"
                                 >
@@ -232,7 +225,7 @@ function NavbarMenu() {
             </nav>
 
             <main>
-                <GetStartedModal isOpen={isOpen} onClose={onClose} />
+                <GetStartedModal isOpen={isOpen} closeModal={onClose} />
             </main>
         </>
     )
