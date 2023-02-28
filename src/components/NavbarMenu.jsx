@@ -35,28 +35,28 @@ function NavbarMenu() {
                             <div className="hidden md:block">
                                 <div className="ml-10 flex items-baseline space-x-4">
                                     <Link
-                                        href="#"
+                                        href="/"
                                         className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
                                     >
                                         Home
                                     </Link>
 
                                     <Link
-                                        href="#"
+                                        href="/guides"
                                         className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
                                     >
                                         Guides
                                     </Link>
 
                                     <Link
-                                        href="#"
+                                        href="/whitepaper"
                                         className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
                                     >
                                         Whitepaper
                                     </Link>
 
                                     <Link
-                                        href="#"
+                                        href="/contact"
                                         className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
                                     >
                                         Contact
