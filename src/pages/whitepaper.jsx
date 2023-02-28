@@ -1,15 +1,10 @@
-import NavbarMenu from "@/components/NavbarMenu"
+import Layout from "@/components/Layout"
 
 function Whitepaper() {
     return (
-        <>
-            <header>
-                <NavbarMenu />
-            </header> 
-            <main>
-                <p>This is Whitepaper Page</p>
-            </main>
-        </>
+        <Layout>
+            <p>This is Whitepaper Page</p>
+        </Layout>
     )
 }
 
