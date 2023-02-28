@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import NavbarMenu from '@/components/NavbarMenu'
+import Layout from '@/components/Layout'
 
 export default function Home() {
     return (
@@ -12,9 +12,9 @@ export default function Home() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/SVG/veritru-sq-white.svg" />
             </Head>
-            <header>
-                <NavbarMenu />
-            </header> 
+            <Layout>
+                <p>This is the Home page</p>
+            </Layout>
         </>
     )
 }

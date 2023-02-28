@@ -1,15 +1,10 @@
-import NavbarMenu from "@/components/NavbarMenu"
+import Layout from "@/components/Layout"
 
 function Guides() {
     return (
-        <>
-            <header>
-                <NavbarMenu />
-            </header> 
-            <main>
-                <p>This is Guides Page</p>
-            </main>
-        </>
+        <Layout>
+            <p>This is Guides Page</p>
+        </Layout>
     )
 }
 

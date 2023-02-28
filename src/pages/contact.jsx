@@ -1,15 +1,10 @@
-import NavbarMenu from "@/components/NavbarMenu"
+import Layout from "@/components/Layout"
 
 function Contact() {
     return (
-        <>
-            <header>
-                <NavbarMenu />
-            </header> 
-            <main>
-                <p>This is Contact Page</p>
-            </main>
-        </>
+        <Layout>
+            <p>This is Contact Page</p>
+        </Layout>
     )
 }
 
