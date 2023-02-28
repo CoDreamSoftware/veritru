@@ -12,9 +12,9 @@ export default function Home() {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
                 <link rel="icon" href="/SVG/veritru-sq-white.svg" />
             </Head>
-            <main>
+            <header>
                 <NavbarMenu />
-            </main> 
+            </header> 
         </>
     )
 }

@@ -10,7 +10,7 @@ import { goerli } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 
-// Configure chains & providers with the Alchemy provider.
+// Configure chains & providers with the Infura provider.
 // Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
 const { chains, provider, webSocketProvider } = configureChains(
     [goerli],
