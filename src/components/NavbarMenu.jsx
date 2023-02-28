@@ -16,6 +16,13 @@ import { truncateAddress } from '@/utilities/address.utils'
 import GetStartedModal from '@/components/GetStartedModal'
 import { useAccount, useDisconnect } from 'wagmi'
 
+const navigation = [
+    { name: 'Home', href: '/' },
+    { name: 'Guides', href: '/guides' },
+    { name: 'Whitepaper', href: '/whitepaper' },
+    { name: 'Contact', href: '/contact' },
+]
+
 function NavbarMenu() {
     const [navOpen, setNavOpen] = useState(false)
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -28,39 +35,21 @@ function NavbarMenu() {
                 <div className="w-full">
                     <div className="flex items-center h-20 w-full">
                         <div className="flex items-center mx-10 md:mx-20 justify-between w-full">
-                            <div className="flex justify-center items-center flex-shrink-0 ">
+                            <Link href="/" className="flex justify-center items-center flex-shrink-0">
                                 <Image src="/svg/veritru-sq-white.svg" className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" width="48" height="48" priority />
                                 <span className="self-center whitespace-nowrap text-xl font-medium font-display dark:text-white ml-2">veritru</span>
-                            </div>
+                            </Link>
                             <div className="hidden md:block">
                                 <div className="ml-10 flex items-baseline space-x-4">
-                                    <Link
-                                        href="/"
-                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
-                                    >
-                                        Home
-                                    </Link>
-
-                                    <Link
-                                        href="/guides"
-                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
-                                    >
-                                        Guides
-                                    </Link>
-
-                                    <Link
-                                        href="/whitepaper"
-                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
-                                    >
-                                        Whitepaper
-                                    </Link>
-
-                                    <Link
-                                        href="/contact"
-                                        className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
-                                    >
-                                        Contact
-                                    </Link>
+                                    {navigation.map((item) => (
+                                        <Link
+                                            key = {item.name}
+                                            href= {item.href}
+                                            className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
+                                        >
+                                            {item.name}
+                                        </Link>
+                                    ))}
 
                                     { !isConnected &&
                                         <button 
@@ -160,34 +149,16 @@ function NavbarMenu() {
                     <div className="md:hidden h-full min-h-screen" id="mobile-menu">
                         <div
                             className="bg-white px-2 pt-2 pb-3 space-y-1 sm:px-3"
-                        >
-                            <Link
-                                href="#"
-                                className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
-                            >
-                                Home
-                            </Link>
-                            
-                            <Link
-                                href="#"
-                                className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
-                            >
-                                Guides
-                            </Link>
-
-                            <Link
-                                href="#"
-                                className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
-                            >
-                                Whitepaper
-                            </Link>
-
-                            <Link
-                                href="#"
-                                className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
-                            >
-                                Contact
-                            </Link>
+                        >                            
+                            {navigation.map((item) => (
+                                <Link
+                                    key = {item.name}
+                                    href= {item.href}
+                                    className="cursor-pointer hover:bg-cyan-500 text-black hover:text-white block px-3 py-2 rounded-md text-base font-medium font-display"
+                                >
+                                    {item.name}
+                                </Link>
+                            ))}
                         </div>
                         { !isConnected &&
                             <button 
