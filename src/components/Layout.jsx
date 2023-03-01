@@ -16,7 +16,7 @@ function Layout(props) {
                 <NavbarMenu />
             </header>
             <main>
-                <div className="max-w-screen-xl mx-10 md:mx-20">
+                <div className="max-w-screen-xl px-2 md:px-3 mx-10 md:mx-20">
                     {props.children}
                 </div>
             </main>

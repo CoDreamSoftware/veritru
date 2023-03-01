@@ -37,7 +37,9 @@ function NavbarMenu() {
                         <div className="flex items-center mx-10 md:mx-20 justify-between w-full">
                             <Link href="/" className="flex justify-center items-center flex-shrink-0">
                                 <Image src="/svg/veritru-sq-white.svg" className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" width="48" height="48" priority />
-                                <span className="self-center whitespace-nowrap text-xl font-medium font-display dark:text-white ml-2">veritru</span>
+                                <span className="self-center whitespace-nowrap text-xl font-medium font-display active:text-cyan-500 hover:text-cyan-500 text-black dark:text-white ml-2">
+                                    VERITRU
+                                </span>
                             </Link>
                             <div className="hidden md:block">
                                 <div className="ml-10 flex items-baseline space-x-4">
@@ -45,7 +47,7 @@ function NavbarMenu() {
                                         <Link
                                             key = {item.name}
                                             href= {item.href}
-                                            className="cursor-pointer active:text-cyan-500 text-black hover:text-cyan-500 px-3 py-2 rounded-md text-sm font-normal font-display"
+                                            className="cursor-pointer active:text-cyan-500 hover:text-cyan-500 text-black dark:text-white px-3 py-2 rounded-md text-sm font-normal font-display"
                                         >
                                             {item.name}
                                         </Link>
