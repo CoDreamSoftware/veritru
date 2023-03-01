@@ -83,7 +83,14 @@ function NavbarMenu() {
                                             <MenuList>
                                                 <MenuGroup title="Profile">
                                                     <MenuItem>Account</MenuItem>
-                                                    <MenuItem onClick={disconnect}>Disconnect</MenuItem>
+                                                    <MenuItem>
+                                                        <Link 
+                                                            onClick={disconnect} 
+                                                            href="/"
+                                                        >
+                                                            Disconnect
+                                                        </Link>
+                                                    </MenuItem>
                                                 </MenuGroup>
                                             </MenuList>
                                         </Menu>
@@ -187,7 +194,7 @@ function NavbarMenu() {
                                     </div>
                                     <Link 
                                         onClick={disconnect}
-                                        href="#"
+                                        href="/"
                                         className="cursor-pointer bg-cyan-500 hover:bg-cyan-600 text-white block px-3 py-2 rounded-md text-base font-medium font-display text-center mx-5 mt-5"
                                     >
                                         Disconnect
