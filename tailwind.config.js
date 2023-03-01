@@ -9,7 +9,8 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                display: ['Poppins']
+                display: ['Poppins'],
+                body: ['Inter'],
             },
         }
     },
