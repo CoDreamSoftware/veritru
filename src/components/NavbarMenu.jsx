@@ -193,8 +193,8 @@ function NavbarMenu() {
                                         </p>
                                     </div>
                                     <Link 
-                                        onClick={disconnect}
                                         href="/"
+                                        onClick={disconnect}
                                         className="cursor-pointer bg-cyan-500 hover:bg-cyan-600 text-white block px-3 py-2 rounded-md text-base font-medium font-display text-center mx-5 mt-5"
                                     >
                                         Disconnect
