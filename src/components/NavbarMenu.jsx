@@ -31,7 +31,7 @@ function NavbarMenu() {
 
     return (
         <>
-            <nav className="shadow-sm fixed w-full z-10">
+            <nav className="w-full fixed z-10 bg-white shadow-sm">
                 <div className="w-full">
                     <div className="flex items-center h-20 w-full">
                         <div className="flex items-center mx-10 md:mx-20 justify-between w-full">

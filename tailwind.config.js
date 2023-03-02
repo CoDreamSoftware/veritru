@@ -10,7 +10,6 @@ module.exports = {
         extend: {
             fontFamily: {
                 display: ['Poppins'],
-                body: ['Inter'],
             },
         }
     },
