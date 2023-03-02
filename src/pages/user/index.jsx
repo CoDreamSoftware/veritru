@@ -1,13 +1,15 @@
-import { Heading, Stack, Card, CardBody, Text, } from '@chakra-ui/react'
+import Link from 'next/link'
+import { Stack, Card, CardBody, Text, } from '@chakra-ui/react'
 import Layout from "@/components/Layout"
 
 function User() {
     return (
         <Layout>
-            <div className="pt-24">
+            <div className="pt-32">
                 <div className="my-2 flex lg:my-3">
                     <span>
-                        <button 
+                        <Link 
+                            href="/user/submit-article"
                             type="button" 
                             className="flex w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-3 py-2 text-center text-sm font-medium font-display"
                         >
@@ -21,22 +23,24 @@ function User() {
                                 </clipPath>
                                 </defs>
                             </svg>
-                            Submit
-                        </button>
+                            Submit Article
+                        </Link>
                     </span>
                 </div>
             </div>
             <article>
-                <Heading as="h5" size="sm">
-                    Recent Articles
-                </Heading>
-                <Stack>
-                    <Card>
-                        <CardBody>
-                            <Text>Article goes here.</Text>
-                        </CardBody>
-                    </Card>
-                </Stack>
+                <div className="mt-10">
+                    <h2 className="font-display font-medium text-black dark:text-white text-base my-2 mx-2">
+                        Recent Articles
+                    </h2>
+                    <Stack>
+                        <Card>
+                            <CardBody>
+                                <Text>Articles goes here.</Text>
+                            </CardBody>
+                        </Card>
+                    </Stack>
+                </div>
             </article>
         </Layout>
     )
