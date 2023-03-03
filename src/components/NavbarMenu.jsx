@@ -17,10 +17,9 @@ import GetStartedModal from '@/components/GetStartedModal'
 import { useAccount, useDisconnect } from 'wagmi'
 
 const navigation = [
-    { name: 'Home', href: '/' },
+    { name: 'Fact Check', href: '/user/fact-check' },
+    { name: 'Submit Article', href: '/user/submit-article' },
     { name: 'Guides', href: '/guides' },
-    { name: 'Whitepaper', href: '/whitepaper' },
-    { name: 'Contact', href: '/contact' },
 ]
 
 function NavbarMenu() {
@@ -59,7 +58,7 @@ function NavbarMenu() {
                                             type="button" 
                                             className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
                                         >
-                                            Get Started
+                                            Connect Wallet
                                         </button>
                                     }
 
@@ -176,7 +175,7 @@ function NavbarMenu() {
                                         type="button" 
                                         className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
                                     >
-                                        Get Started
+                                        Connect Wallet
                                     </button>
                                 }
 
