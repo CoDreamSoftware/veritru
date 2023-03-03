@@ -2,9 +2,6 @@ import '@/styles/globals.css'
 import { ChakraProvider } from '@chakra-ui/react'
 import theme from './_theme'
 
-import { SessionProvider } from "next-auth/react"
-//<SessionProvider session={session}></SessionProvider>
-
 import { WagmiConfig, createClient, configureChains } from 'wagmi'
 import { goerli } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'

@@ -1,6 +1,40 @@
+import Link from 'next/link'
+import { useState } from 'react'
 import Layout from '@/components/Layout'
+import { create } from 'ipfs-http-client'
+
+const projectId = "2MURYo5d1PABIanqYk93fnu9IJ6"
+const projectSecret = "d53a696862340aadcfb27ee0e5eaaa3e"
+
+const auth = 
+    'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+
+const ipfs = create({
+    host: 'ipfs.infura.io',
+    port: 5001,
+    protocol: 'https',
+    headers: {
+        authorization: auth,
+    }
+})
 
 function SubmitArticle() {
+    const [cid, setCid] = useState(null)
+    console.log(projectId, 'and', projectSecret)
+
+    async function saveToIpfs(e) {
+        const file = e.target.files[0]
+        try {
+            const added = await ipfs.add(file, {
+                progress: (prog) => console.log(`received: ${prog}`),
+            })
+            const fileUrl = `https://veritru.infura-ipfs.io/ipfs/${added.path}`
+            setCid(fileUrl)
+        } catch (error) {
+            console.log('Error uploading file: ', error)
+        }
+    }
+
     return (
         <Layout>
             <div className="pt-32 flex items-center justify-center p-12">
@@ -8,11 +42,7 @@ function SubmitArticle() {
                     <h2 className="font-display font-semibold text-base text-center mb-4 mx-2 text-gray-900 dark:text-white">
                         Article Submission
                     </h2>
-                    <form
-                        action="#"
-                        method="POST"
-                    >
-
+                    <form>
                         <div className="mb-5">
                             <label
                                 htmlFor="name"
@@ -98,21 +128,33 @@ function SubmitArticle() {
                                         <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">docx, pdf, jpg, png (max. 2mb)</p>
                                     </div>
-                                    <input id="dropzone-file" type="file" className="hidden" />
+                                    <input 
+                                        id="dropzone-file" 
+                                        type="file" 
+                                        className="hidden"
+                                        onChange={saveToIpfs}
+                                    />
                                 </label>
                             </div> 
                         </div>
                         
-                        <div>
+                        <div className="flex w-full flex-row-reverse">
+                            <Link 
+                                href="/user"
+                                type="button" 
+                                className="text-gray-600 bg-white border border-gray-300 focus:outline-none hover:bg-gray-200 focus:ring-2 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mx-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
+                                Cancel
+                            </Link>
                             <button
                                 type="button" 
-                                className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
+                                className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-8 py-2.5 mx-2 text-center text-sm font-medium font-display"
                             >
                                 Submit
                             </button>
                         </div>
                     </form>
                 </div>
+                {cid && <p>PDF Uploaded to IPFS with CID {cid}</p>}
             </div>
         </Layout>
     )
