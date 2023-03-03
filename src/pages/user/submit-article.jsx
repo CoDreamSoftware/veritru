@@ -1,40 +1,7 @@
 import Link from 'next/link'
-import { useState } from 'react'
 import Layout from '@/components/Layout'
-import { create } from 'ipfs-http-client'
-
-const projectId = "2MURYo5d1PABIanqYk93fnu9IJ6"
-const projectSecret = "d53a696862340aadcfb27ee0e5eaaa3e"
-
-const auth = 
-    'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
-
-const ipfs = create({
-    host: 'ipfs.infura.io',
-    port: 5001,
-    protocol: 'https',
-    headers: {
-        authorization: auth,
-    }
-})
 
 function SubmitArticle() {
-    const [cid, setCid] = useState(null)
-    console.log(projectId, 'and', projectSecret)
-
-    async function saveToIpfs(e) {
-        const file = e.target.files[0]
-        try {
-            const added = await ipfs.add(file, {
-                progress: (prog) => console.log(`received: ${prog}`),
-            })
-            const fileUrl = `https://veritru.infura-ipfs.io/ipfs/${added.path}`
-            setCid(fileUrl)
-        } catch (error) {
-            console.log('Error uploading file: ', error)
-        }
-    }
-
     return (
         <Layout>
             <div className="pt-32 flex items-center justify-center p-12">
@@ -132,7 +99,6 @@ function SubmitArticle() {
                                         id="dropzone-file" 
                                         type="file" 
                                         className="hidden"
-                                        onChange={saveToIpfs}
                                     />
                                 </label>
                             </div> 
@@ -154,7 +120,6 @@ function SubmitArticle() {
                         </div>
                     </form>
                 </div>
-                {cid && <p>PDF Uploaded to IPFS with CID {cid}</p>}
             </div>
         </Layout>
     )
