@@ -1,7 +1,39 @@
 import Link from 'next/link'
+import { useState } from 'react'
 import Layout from '@/components/Layout'
+import { create } from 'ipfs-http-client'
 
 function SubmitArticle() {
+    const [cid, setCid] = useState(null)
+
+    const projectId = process.env.INFURA_IPFS_ID
+    const projectSecret = process.env.INFURA_IPFS_SECRET
+    const auth =
+        'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
+
+    const IPFS = create({
+        host: 'ipfs.infura.io',
+        port: 5001,
+        protocol: 'https',
+        headers: {
+            authorization: auth,
+        },
+    })
+
+    const saveToIpfs = async (event) => {
+        const file = event.target.files[0]
+        try {
+            const added = await IPFS.add(file, {
+                progress: (prog) => console.log(`Received: ${prog}`)
+            })
+            console.log('CID: ', added.path)
+            const fileUrl = `https://veritru.infura-ipfs.io/ipfs/${added.path}`
+            setCid(fileUrl)
+        } catch (error) {
+            console.log('Error uploading file: ', error)
+        }
+    }
+
     return (
         <Layout>
             <div className="pt-32 flex items-center justify-center p-12">
@@ -99,6 +131,7 @@ function SubmitArticle() {
                                         id="dropzone-file" 
                                         type="file" 
                                         className="hidden"
+                                        onChange={saveToIpfs}
                                     />
                                 </label>
                             </div> 
@@ -119,6 +152,7 @@ function SubmitArticle() {
                             </button>
                         </div>
                     </form>
+                    {cid && <p>Uploaded to IPFS with CID : {cid}</p>}
                 </div>
             </div>
         </Layout>
