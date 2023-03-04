@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import Layout from '@/components/Layout'
 import { create } from 'ipfs-http-client'
+import { useToast } from '@chakra-ui/react'
 
 function SubmitArticle() {
     const [cid, setCid] = useState(null)
@@ -20,17 +21,37 @@ function SubmitArticle() {
         },
     })
 
+    const toaster = useToast()
+    const toast = (value) => {
+        toaster({
+            title: value.title,
+            description: value.msg,
+            status: value.stats,
+            duration: 3000,
+            isClosable: true,
+            position: 'top',
+        })
+    }
+
     const saveToIpfs = async (event) => {
         const file = event.target.files[0]
         try {
             const added = await IPFS.add(file, {
                 progress: (prog) => console.log(`Received: ${prog}`)
             })
-            console.log('CID: ', added.path)
             const fileUrl = `https://veritru.infura-ipfs.io/ipfs/${added.path}`
             setCid(fileUrl)
+            toast({
+                title: 'Upload Success', 
+                msg: `File Url: ${fileUrl}`, 
+                stats: 'success'
+            })
         } catch (error) {
-            console.log('Error uploading file: ', error)
+            toast({
+                title: 'Error uploading file', 
+                msg: error.message, 
+                stats: 'error'
+            })
         }
     }
 
