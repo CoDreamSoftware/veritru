@@ -17,7 +17,8 @@ import GetStartedModal from '@/components/GetStartedModal'
 import { useAccount, useDisconnect } from 'wagmi'
 
 const navigation = [
-    { name: 'Fact Check', href: '/user/fact-check' },
+    { name: 'Home', href: '/' },
+    { name: 'Fact Check', href: '/user' },
     { name: 'Submit Article', href: '/user/submit-article' },
     { name: 'Guides', href: '/guides' },
 ]
