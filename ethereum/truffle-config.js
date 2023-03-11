@@ -41,12 +41,17 @@
  * https://trufflesuite.com/docs/truffle/getting-started/using-the-truffle-dashboard/
  */
 
+const path = require("path")
+
 require('dotenv').config();
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const MNEMONIC = process.env.MNEMONIC_KEY
 const INFURA_API_KEY = process.env.INFURA_API_KEY
+const AccountIndex = 0
 
 module.exports = {
+  contracts_build_directory: path.join(__dirname, "./../src/contracts/build"),
+
   /**
    * Networks define how you connect to your ethereum client and let you set the
    * defaults web3 uses to send transactions. If you don't specify one truffle
@@ -58,15 +63,12 @@ module.exports = {
    */
 
   // Set up Truffle Dashboard configuration
-  dashboard: {
-    port: 24012,
-    host: "localhost",
-    verbose: true,
-  },
-
-  contracts_directory: "./contracts",
-  migrations_directory: "./migrations",
-  contracts_build_directory: "../src/contracts",
+  // dashboard: {
+  //   port: 24012,
+  //   host: "localhost",
+  //   verbose: true,
+  // },
+  
 
   networks: {
     // Useful for testing. The `development` name is special - truffle uses it by default
@@ -76,9 +78,9 @@ module.exports = {
     // options below to some value.
     //
     development: {
-     host: "127.0.0.1",     // Localhost (default: none)
-     port: 8545,            // Standard Ethereum port (default: none)
-     network_id: "*",       // Any network (default: none)
+      host: "127.0.0.1",     // Localhost (default: none)
+      port: 7545,            // Standard Ethereum port (default: none)
+      network_id: "*",       // Any network (default: none)
     },
     //
     // An additional network, but with some advanced options…
@@ -94,13 +96,30 @@ module.exports = {
     // Useful for deploying to a public network.
     // Note: It's important to wrap the provider as a function to ensure truffle uses a new provider every time.
     goerli: {
-      provider: () => new HDWalletProvider(MNEMONIC, INFURA_API_KEY),
+      provider: () => new HDWalletProvider(MNEMONIC, `https://goerli.infura.io/v3/${INFURA_API_KEY}`, AccountIndex),
       network_id: 5,       // Goerli's id
-      gas: 1400000,           // Gas sent with each transaction (default: ~6700000)
-      confirmations: 2,    // # of confirmations to wait between deployments. (default: 0)
-      timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
-      skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+      gas: 1400000,        // Gas sent with each transaction (default: ~6700000)
+      // confirmations: 2,    // # of confirmations to wait between deployments. (default: 0)
+      // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
+    //
+    // Useful for deploying to a public network.
+    // Note: It's important to wrap the provider as a function to ensure truffle uses a new provider every time.
+    sepolia: {
+      provider: () => new HDWalletProvider(MNEMONIC, `https://sepolia.infura.io/v3${INFURA_API_KEY}`, AccountIndex),
+      network_id: 5,       // Goerli's id
+      gas: 1400000,        // Gas sent with each transaction (default: ~6700000)
+      // confirmations: 2,    // # of confirmations to wait between deployments. (default: 0)
+      // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
+      // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
+    },
+    //
+    ganache_local: {
+      provider: () => new HDWalletProvider(MNEMONIC, `http://127.0.0.1:7545`, AccountIndex),
+      network_id: 5777,   // This network is yours, in the cloud.
+      production: false   // Treats this network as if it was a public net. (default: false)
+    }
     //
     // Useful for private networks
     // private: {
@@ -150,4 +169,4 @@ module.exports = {
   //     }
   //   }
   // }
-};
+}
