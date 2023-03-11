@@ -3,14 +3,14 @@ import { ChakraProvider } from '@chakra-ui/react'
 import theme from './_theme'
 
 import { WagmiConfig, createClient, configureChains } from 'wagmi'
-import { goerli } from 'wagmi/chains'
+import { goerli, sepolia } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { publicProvider } from 'wagmi/providers/public'
 
 // Configure chains & providers with the Infura provider.
 // Two popular providers are Alchemy (alchemy.com) and Infura (infura.io)
 const { chains, provider, webSocketProvider } = configureChains(
-    [goerli],
+    [goerli, sepolia],
     [infuraProvider({ apiKey: process.env.INFURA_API_KEY, priority:0 }), publicProvider()]
 )
 
