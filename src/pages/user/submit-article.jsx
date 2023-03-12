@@ -1,15 +1,23 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { create } from 'ipfs-http-client'
-import Layout from '@/components/Layout'
 import { useToast, Progress } from '@chakra-ui/react'
+import { useAccount } from 'wagmi'
+import Layout from '@/components/Layout'
 import DisplayPDF from '@/components/DisplayPDF'
 
+import Veritru from '@/contracts/veritru'
+import web3 from '@/contracts/web3'
+
 function SubmitArticle() {
+    const { address, isConnected } = useAccount()
+    const [headline, setHeadline] = useState('')
+    const [category, setCategory] = useState('')
     const [cid, setCid] = useState('')
     const [file, setFile] = useState(null)
     const [progress, setProgress] = useState(0)
     const [isUploading, setIsUploading] = useState(false)
+    const [loading, setLoading] = useState(false)
 
     const projectId = process.env.INFURA_IPFS_ID
     const projectSecret = process.env.INFURA_IPFS_SECRET
@@ -66,6 +74,45 @@ function SubmitArticle() {
     useEffect(() => {
         console.log(`Upload Progress: ${progress}`);
     }, [progress])
+    
+    // Execute createArticle method to blockchain
+    const onSubmit = async (event) => {
+        event.preventDefault()
+
+        setLoading(true)
+        const accounts = await web3.eth.getAccounts()
+        const createArticle = Veritru.methods
+            .createArticle(address, cid, headline, category)
+            .send({ from: accounts[0] })
+
+        try {
+            await createArticle
+            console.log(createArticle)
+            toast({
+                title: 'Successfully submitted article', 
+                stats: 'success'
+            })
+            resetForm()
+        } catch (error) {
+            toast({
+                title: 'Error submitting article', 
+                msg: error.message, 
+                stats: 'error'
+            })
+        }
+        setLoading(false)
+    }
+    useEffect(() => {
+        console.log(headline)
+        console.log(category)
+    }, [headline, category])
+
+    const resetForm = () => {
+        setHeadline('')
+        setCategory('')
+        setCid('')
+        setFile(null)
+    }
 
     return (
         <Layout>
@@ -74,7 +121,45 @@ function SubmitArticle() {
                     <h2 className="font-display font-semibold text-base text-center mb-4 mx-2 text-gray-900 dark:text-white">
                         Article Submission
                     </h2>
-                    <form>
+                    <form onSubmit={onSubmit}>
+                        { isConnected && 
+                            <div className="mb-5">
+                                <label
+                                    htmlFor="name"
+                                    className="mx-2 block font-normal font-display text-base text-gray-900 dark:text-white tracking-wide"
+                                >
+                                    Uploader
+                                </label>
+                                <input
+                                    value={address}
+                                    disabled
+                                    type="text"
+                                    name="title"
+                                    id="title"
+                                    placeholder="Uploader Address"
+                                    className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
+                                />
+                            </div>
+                        }
+
+                        <div className="mb-5">
+                            <label
+                                htmlFor="name"
+                                className="mx-2 block font-normal font-display text-base text-gray-900 dark:text-white tracking-wide"
+                            >
+                                IPFS CID
+                            </label>
+                            <input
+                                value={cid}
+                                disabled
+                                type="text"
+                                name="title"
+                                id="title"
+                                placeholder="Generated once document uploaded"
+                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
+                            />
+                        </div>
+
                         <div className="mb-5">
                             <label
                                 htmlFor="name"
@@ -84,11 +169,13 @@ function SubmitArticle() {
                             </label>
                             <span className="mb-2 mx-2 block font-display text-[.775rem] text-gray-400 dark:text-white">Required</span>
                             <input
+                                value={headline}
+                                onChange={(e)=> setHeadline(e.target.value)}
                                 type="text"
                                 name="title"
                                 id="title"
                                 placeholder="Article Title"
-                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
+                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-black dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
                             />
                         </div>
 
@@ -97,47 +184,17 @@ function SubmitArticle() {
                                 htmlFor="subject"
                                 className="mx-2 block font-normal font-display text-base text-gray-900 dark:text-white tracking-wide"
                             >
-                                Authors
+                                Category
                             </label>
                             <span className="mb-2 mx-2 block font-display text-[.775rem] text-gray-400 dark:text-white">Required</span>
                             <input
+                                value={category}
+                                onChange={(e)=>setCategory(e.target.value)}
                                 type="text"
                                 name="authors"
                                 id="authors"
-                                placeholder="Author's Full Name"
-                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
-                            />
-                        </div>
-
-                        <div className="mb-5">
-                            <label
-                                htmlFor="name"
-                                className="mb-2 mx-2 block font-normal font-display text-base text-gray-900 dark:text-white tracking-wide"
-                            >
-                                Description
-                            </label>
-                            <input
-                                type="text"
-                                name="description"
-                                id="description"
-                                placeholder="Short Description of the Article"
-                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
-                            />
-                        </div>
-
-                        <div className="mb-5">
-                            <label
-                                htmlFor="name"
-                                className="mb-2 mx-2 block font-normal font-display text-base text-gray-900 dark:text-white tracking-wide"
-                            >
-                                Keywords
-                            </label>
-                            <input
-                                type="text"
-                                name="keywords"
-                                id="keywords"
-                                placeholder="Short Description of the Article"
-                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
+                                placeholder="Category of the Article"
+                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-black dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
                             />
                         </div>
 
@@ -156,12 +213,12 @@ function SubmitArticle() {
                                             <p className="mb-2 text-sm text-center lg:text-left text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload</span> or drag and drop</p>
                                             <p className="text-xs text-gray-500 dark:text-gray-400">pdf &#40;max. 2mb&#41;</p>
                                         </div>
-                                        <input 
+                                        <input
+                                            onChange={saveToIpfs}
+                                            accept={'.pdf'}
                                             id="dropzone-file" 
                                             type="file" 
                                             className="hidden"
-                                            accept={'.pdf'}
-                                            onChange={saveToIpfs}
                                         />
                                     </label>
                                 </div> 
@@ -189,13 +246,26 @@ function SubmitArticle() {
                                 <DisplayPDF cid={cid}/>
                             </div>
                         }
-
+                        
                         <div className="flex w-full flex-row-reverse mt-5">
                             <button
-                                type="button" 
+                                type="submit"
+                                disabled={loading}
                                 className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-8 py-2.5 mx-2 text-center text-sm font-medium font-display"
                             >
-                                Submit
+                                { !loading && 
+                                    <p>Submit</p>
+                                }
+                                { loading &&
+                                    <div class="text-center">
+                                        <div role="status">
+                                            <svg ariaHidden="true" className="inline w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                            </svg>
+                                        </div>
+                                    </div>
+                                }
                             </button>
                             <Link 
                                 href="/user"
@@ -205,7 +275,6 @@ function SubmitArticle() {
                             </Link>
                         </div>
                     </form>
-                    {cid && <p>Uploaded to IPFS with CID : {cid}</p>}
                 </div>
             </div>
         </Layout>
