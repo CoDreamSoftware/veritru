@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { HiArrowLongRight } from "react-icons/hi2"
-// import { dateFormat } from '@/utilities/dateformatter.utils'
 import Layout from "@/components/Layout"
 import Veritru from '@/contracts/veritru'
 
@@ -12,6 +11,7 @@ function User() {
         async function fetch() {
             const fetchArticles = await Veritru.methods.getAllArticles().call()
             setArticles(fetchArticles)
+            console.log(fetchArticles)
         }
         fetch()
     }, [])
@@ -61,15 +61,14 @@ function User() {
                                                     {article.date}
                                                 </span> */}
 
-                                                { article.result ? (
+                                                { article.result &&
                                                     <span className="px-3 py-1 text-sm font-bold text-gray-100 transition-colors duration-300 transform bg-gray-600 rounded cursor-pointer hover:bg-gray-500" tabIndex="0" role="button">
                                                         { article.result }
                                                     </span>
-                                                ) : (
-                                                    <span className="px-3 py-1 text-sm font-medium text-gray-100 transition-colors duration-300 transform bg-gray-600 rounded cursor-pointer hover:bg-gray-500" tabIndex="0" role="button">
-                                                        Unverified
-                                                    </span>
-                                                )}
+                                                }
+                                                <span className="px-3 py-1 text-sm font-medium text-gray-100 transition-colors duration-300 transform bg-gray-600 rounded cursor-pointer hover:bg-gray-500" tabIndex="0" role="button">
+                                                    Unverified
+                                                </span>
                                             </div>
                                         </div>
                                     ))}
