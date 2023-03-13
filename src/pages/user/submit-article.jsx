@@ -6,8 +6,8 @@ import { useAccount } from 'wagmi'
 import Layout from '@/components/Layout'
 import DisplayPDF from '@/components/DisplayPDF'
 
-import Veritru from '@/contracts/veritru'
-import web3 from '@/contracts/web3'
+import Veritru from '../../contracts/veritru'
+import web3 from '../../contracts/web3'
 
 function SubmitArticle() {
     const { address, isConnected } = useAccount()
