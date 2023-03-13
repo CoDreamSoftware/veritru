@@ -1,6 +1,5 @@
 import '@/styles/globals.css'
-import { ChakraProvider } from '@chakra-ui/react'
-import theme from './_theme'
+import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 
 import { WagmiConfig, createClient, configureChains } from 'wagmi'
 import { goerli, sepolia } from 'wagmi/chains'
@@ -19,6 +18,13 @@ const client = createClient({
     autoConnect: true,
     provider,
     webSocketProvider
+})
+
+const theme = extendTheme({
+    fonts: {
+        heading: `Poppins`,
+        body: `Poppins`,
+    },
 })
 
 export default function App({ Component, pageProps }) {
