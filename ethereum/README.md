@@ -13,26 +13,32 @@
 Ensure you are in a `ethereum` directory.
 
 1. Install Truffle globally.
-    ```javascript
+    ```
     npm install -g truffle
     ```
 
 2. In the `ethereum` directory, you can see the directory structure of truffle.
-    ```bash
+    ```
     cd ethereum
     ls
     /contracts /migrations /test truffle-config.js
     ```
-
+    
 3. Compile and migrate the smart contracts.
     ```javascript
+    // create a json format for abi
     truffle compile
-    truffle migrate
+
+    // deploy the smart contract
+    truffle migrate --network [configNetwork]
+    // Note: --network specifies on what network you
+    // will deploy the contract based from your truffle-config.js
+    // By default, it will look for a network named `development`
     ```
 
 4. Truffle can run tests written in JavaScript against your smart contracts which you find at the `ethereum/test/` directory. Note the command varies slightly if you're in or outside of the development console.
     ```javascript
-    // inside the development console.
+    // inside the development console..
     truffle develop
     test
 

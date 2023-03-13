@@ -45,7 +45,7 @@ const path = require("path")
 
 require('dotenv').config();
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const MNEMONIC = process.env.MNEMONIC_KEY
+const PRIVATE_KEY = process.env.PRIVATE_KEY
 const INFURA_API_KEY = process.env.INFURA_API_KEY
 const AccountIndex = 0
 
@@ -96,9 +96,9 @@ module.exports = {
     // Useful for deploying to a public network.
     // Note: It's important to wrap the provider as a function to ensure truffle uses a new provider every time.
     goerli: {
-      provider: () => new HDWalletProvider(MNEMONIC, `https://goerli.infura.io/v3/${INFURA_API_KEY}`, AccountIndex),
-      network_id: 5,       // Goerli's id
-      gas: 1400000,        // Gas sent with each transaction (default: ~6700000)
+      provider: () => new HDWalletProvider(PRIVATE_KEY, `https://goerli.infura.io/v3/${INFURA_API_KEY}`, AccountIndex),
+      network_id: 5,       // Network id
+      gas: 5500000,        // Gas sent with each transaction (default: ~6700000)
       // confirmations: 2,    // # of confirmations to wait between deployments. (default: 0)
       // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
@@ -107,23 +107,23 @@ module.exports = {
     // Useful for deploying to a public network.
     // Note: It's important to wrap the provider as a function to ensure truffle uses a new provider every time.
     sepolia: {
-      provider: () => new HDWalletProvider(MNEMONIC, `https://sepolia.infura.io/v3${INFURA_API_KEY}`, AccountIndex),
-      network_id: 5,       // Goerli's id
-      gas: 1400000,        // Gas sent with each transaction (default: ~6700000)
+      provider: () => new HDWalletProvider(PRIVATE_KEY, `https://sepolia.infura.io/v3${INFURA_API_KEY}`, AccountIndex),
+      network_id: 11155111,       // Network id
+      gas: 5500000,        // Gas sent with each transaction (default: ~6700000)
       // confirmations: 2,    // # of confirmations to wait between deployments. (default: 0)
       // timeoutBlocks: 200,  // # of blocks before a deployment times out  (minimum/default: 50)
       // skipDryRun: true     // Skip dry run before migrations? (default: false for public nets )
     },
     //
     ganache_local: {
-      provider: () => new HDWalletProvider(MNEMONIC, `http://127.0.0.1:7545`, AccountIndex),
+      provider: () => new HDWalletProvider(PRIVATE_KEY, `http://127.0.0.1:7545`, AccountIndex),
       network_id: 5777,   // This network is yours, in the cloud.
       production: false   // Treats this network as if it was a public net. (default: false)
     }
     //
     // Useful for private networks
     // private: {
-    //   provider: () => new HDWalletProvider(MNEMONIC, `https://network.io`),
+    //   provider: () => new HDWalletProvider(PRIVATE_KEY, `https://network.io`),
     //   network_id: 2111,   // This network is yours, in the cloud.
     //   production: true    // Treats this network as if it was a public net. (default: false)
     // }
