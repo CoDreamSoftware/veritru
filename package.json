@@ -2,6 +2,7 @@
     "name": "veritru",
     "version": "0.1.0",
     "author": "Mark Christian Tan",
+    "license": "MIT",
     "description": "VeriTru is a web application that uses blockchain technology to utilize its decentralization, security, and immutability of records to combat the spread of fake news by creating a platform that stores and retains all fact-checked news articles or contents.",
     "private": true,
     "scripts": {

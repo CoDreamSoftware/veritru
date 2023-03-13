@@ -45,8 +45,8 @@ contract Veritru {
         uint _organization, 
         uint _role
     ) public {
-        Reviewer storage v = reviewers[msg.sender];
-        reviewerMappingKeys.push(msg.sender);
+        Reviewer storage v = reviewers[_reviewer_address];
+        reviewerMappingKeys.push(_reviewer_address);
         v.reviewer_address = _reviewer_address;
         v.username = _username;
         v.tenure = _tenure;
@@ -121,14 +121,15 @@ contract Veritru {
     int public totalVotes;
 
     function setVote(
+        address _voter,
         string memory _ipfs_cid,
         int _vote, 
         int _confidence
     ) public {
-        Vote storage v = votes[msg.sender];
-        voteMappingKeys.push(msg.sender);
+        Vote storage v = votes[_voter];
+        voteMappingKeys.push(_voter);
 
-        v.voter = msg.sender;
+        v.voter = _voter;
         v.voted = true;
 
         v.ipfs_cid = _ipfs_cid;
@@ -136,7 +137,7 @@ contract Veritru {
         v.confidence = _confidence;
 
         totalVotes += _vote;
-        setFrequency(1);
+        setFrequency(_voter, 1);
     }
 
     function getVote(address _addr) public view returns (
@@ -167,8 +168,8 @@ contract Veritru {
     // // // // // // // // // // // // // //
     // //      FREQUENCY OF VOTE       // //
     // // // // // // // // // // // // //
-    function setFrequency(uint _frequency) public {
-        Reviewer storage v = reviewers[msg.sender];
+    function setFrequency(address _reviewer_address, uint _frequency) public {
+        Reviewer storage v = reviewers[_reviewer_address];
         v.frequency += _frequency;
     }
 
@@ -180,8 +181,8 @@ contract Veritru {
     // // // // // // // // // // // // // //
     // //       ACCURACY OF VOTE       // //
     // // // // // // // // // // // // //
-    function setAccuracy(uint _accuracy) public {
-        Reviewer storage v = reviewers[msg.sender];
+    function setAccuracy(address _reviewer_address, uint _accuracy) public {
+        Reviewer storage v = reviewers[_reviewer_address];
         v.accuracy += _accuracy;
     }
 
