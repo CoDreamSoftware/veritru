@@ -1,5 +1,5 @@
-import contract from '@/contracts/build/Veritru.json'
-import web3 from "@/contracts/web3"
+import contract from './build/Veritru.json'
+import web3 from "./web3"
 
 const contractAddress = process.env.CONTRACT_ADDRESS
 const contractInterface = contract.abi
