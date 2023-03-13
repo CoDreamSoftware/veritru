@@ -50,7 +50,7 @@ const INFURA_API_KEY = process.env.INFURA_API_KEY
 const AccountIndex = 0
 
 module.exports = {
-  contracts_build_directory: path.join(__dirname, "./../src/contracts/build"),
+  contracts_build_directory: path.join(__dirname, "./../src/contracts/compile"),
 
   /**
    * Networks define how you connect to your ethereum client and let you set the

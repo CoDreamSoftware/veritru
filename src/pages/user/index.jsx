@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { HiArrowLongRight } from "react-icons/hi2"
 import Layout from "@/components/Layout"
-import Veritru from '../../contracts/veritru'
+import Veritru from '@/contracts/veritru'
 
 function User() {
     const [articles, setArticles] = useState([])
