@@ -23,8 +23,16 @@ Ensure you are in a `ethereum` directory.
     ls
     /contracts /migrations /test truffle-config.js
     ```
-    
-3. Compile and migrate the smart contracts.
+
+3. Create a `.env.local` file and copy the contents from `.env.example`, this is to securely store your env variables. `Don't forget to pass all the env variables to next.config.js as well to be able to use them in your project.`
+   ```
+    ## .env.local
+    INFURA_API_KEY="Your Infura API Key"
+    PRIVATE_KEY="Account Address where the contract was deployed"
+    CONTRACT_ADDRESS="Contract Address of your contract"
+   ```
+
+4. Compile and migrate the smart contracts.
     ```javascript
     // create a json format for abi
     truffle compile
@@ -36,7 +44,7 @@ Ensure you are in a `ethereum` directory.
     // By default, it will look for a network named `development`
     ```
 
-4. Truffle can run tests written in JavaScript against your smart contracts which you find at the `ethereum/test/` directory. Note the command varies slightly if you're in or outside of the development console.
+5. Truffle can run tests written in JavaScript against your smart contracts which you find at the `ethereum/test/` directory. Note the command varies slightly if you're in or outside of the development console.
     ```javascript
     // inside the development console..
     truffle develop

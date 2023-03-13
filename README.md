@@ -21,19 +21,15 @@ First ensure you are in a new and empty directory.
     INFURA_API_KEY="Your Infura API Key"
     INFURA_IPFS_ID="Your Infura IPFS Key"
     INFURA_IPFS_SECRET="Your Infura IPFS Secret Key"
-    PRIVATE_KEY="Account Address where the contract was deployed"
     CONTRACT_ADDRESS="Contract Address of your contract"
-    MONGODB_URI="Mongodb URI"
    ```
    ```javascript
-   ## next.config.js
+   // next.config.js
    env: {
         INFURA_API_KEY: process.env.INFURA_API_KEY,
         INFURA_IPFS_ID: process.env.INFURA_IPFS_ID,
         INFURA_IPFS_SECRET: process.env.INFURA_IPFS_SECRET,
-        MNEMONIC_KEY: process.env.MNEMONIC_KEY,
         CONTRACT_ADDRESS: process.env.CONTRACT_ADDRESS,
-        MONGODB_URI: process.env.MONGODB_URI,
    }
    ```
 
