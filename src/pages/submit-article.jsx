@@ -9,11 +9,11 @@ import DisplayPDF from '@/components/DisplayPDF'
 import Veritru from '@/contracts/veritru'
 import web3 from '@/contracts/web3'
 
-function SubmitArticle() {
+export default function SubmitArticle() {
     const { address, isConnected } = useAccount()
+    const [cid, setCid] = useState('')
     const [headline, setHeadline] = useState('')
     const [category, setCategory] = useState('')
-    const [cid, setCid] = useState('')
     const [file, setFile] = useState(null)
 
     const [progress, setProgress] = useState(0)
@@ -283,5 +283,3 @@ function SubmitArticle() {
         </Layout>
     )
 }
-
-export default SubmitArticle

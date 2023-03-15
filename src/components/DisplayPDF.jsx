@@ -6,7 +6,7 @@ import { HiArrowLongLeft, HiArrowLongRight } from "react-icons/hi2";
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/worker/pdf.worker.min.js'
 
-function DisplayPDF ({ cid }) {
+export default function DisplayPDF ({ cid }) {
     const [pdf, setPdf] = useState(null)
     const [numPages, setNumPages] = useState(null)
     const [pageNumber, setPageNumber] = useState(1)
@@ -80,5 +80,3 @@ function DisplayPDF ({ cid }) {
         </Document>
     )
 }
-
-export default DisplayPDF
