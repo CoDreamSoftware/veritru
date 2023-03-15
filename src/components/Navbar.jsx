@@ -1,33 +1,54 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Transition } from '@headlessui/react'
 import { 
-    useDisclosure, 
     Avatar, 
     Button,
     Menu, 
     MenuButton, 
     MenuList, 
     MenuGroup, 
-    MenuItem 
+    MenuItem,
+    useDisclosure, 
 } from '@chakra-ui/react'
 import { truncateAddress } from '@/utilities/address.utils'
-import GetStartedModal from '@/components/GetStartedModal'
-import { useAccount, useDisconnect } from 'wagmi'
+import RegisterModal from '@/components/RegisterModal'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
 const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'Fact Check', href: '/user' },
-    { name: 'Submit Article', href: '/user/submit-article' },
+    { name: 'Fact Check', href: '/' },
+    { name: 'Submit Article', href: '/submit-article' },
     { name: 'Guides', href: '/guides' },
 ]
 
-function NavbarMenu() {
+export default function Navbar() {
     const [navOpen, setNavOpen] = useState(false)
     const { isOpen, onOpen, onClose } = useDisclosure()
+
     const { address, isConnected } = useAccount()
-    const { disconnect } = useDisconnect()
+    const { connect } = useConnect({
+        connector: new MetaMaskConnector(),
+        onSuccess() { localStorage.setItem('isWalletConnected', true) },
+        onError(error) { console.log(error) }
+    })
+    const { disconnect } = useDisconnect({
+        onSettled(data, error) {
+            console.log('Disconnect Settled', {data, error})
+            localStorage.setItem('isWalletConnected', false)
+        }
+    })
+
+    // Persist wallet connection
+    useEffect(() => {
+        const connectWalletOnPageLoad = async () => {
+            if (localStorage.getItem('isWalletConnected') === 'true') {
+                await connect()
+            }
+        }
+        connectWalletOnPageLoad()
+    }, [])
 
     return (
         <>
@@ -53,18 +74,8 @@ function NavbarMenu() {
                                         </Link>
                                     ))}
 
-                                    { !isConnected &&
-                                        <button 
-                                            onClick={onOpen}
-                                            type="button" 
-                                            className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
-                                        >
-                                            Connect Wallet
-                                        </button>
-                                    }
-
-                                    { isConnected &&
-                                        <Menu>
+                                    { isConnected
+                                        ? <Menu>
                                             <MenuButton 
                                                 as={Button}
                                             >
@@ -94,6 +105,13 @@ function NavbarMenu() {
                                                 </MenuGroup>
                                             </MenuList>
                                         </Menu>
+                                        : <button 
+                                            onClick={onOpen}
+                                            type="button" 
+                                            className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
+                                        >
+                                            Get Started
+                                        </button>
                                     }
                                 </div>
                             </div>
@@ -155,7 +173,7 @@ function NavbarMenu() {
                     leaveFrom="opacity-100 scale-100 translate-y-2"
                     leaveTo="opacity-0 scale-100 translate-y-0"
                 >
-                    <div className="md:hidden bg-white relative h-32 min-h-screen" id="mobile-menu">
+                    <div className="md:hidden bg-white relative min-h-screen" id="mobile-menu">
                         <div
                             className="px-10 py-3 space-y-1"
                         >                            
@@ -170,18 +188,8 @@ function NavbarMenu() {
                             ))}
                         </div>
                         <div className="absolute inset-x-0 bottom-28 px-10 py-3 space-y-1">
-                            { !isConnected &&
-                                    <button 
-                                        onClick={onOpen}
-                                        type="button" 
-                                        className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
-                                    >
-                                        Connect Wallet
-                                    </button>
-                                }
-
-                            { isConnected &&
-                                <>
+                            { isConnected
+                                ? <>
                                     <div className="flex items-center px-3 py-2 mt-5 mx-5">
                                         <Avatar 
                                             name={truncateAddress(address)} 
@@ -200,15 +208,20 @@ function NavbarMenu() {
                                         Disconnect
                                     </Link>
                                 </>
+                                : <button 
+                                    onClick={onOpen}
+                                    type="button" 
+                                    className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
+                                >
+                                    Connect Wallet
+                                </button>
                             }
                         </div>
                     </div>
                 </Transition>
             </nav>
 
-            <GetStartedModal isOpen={isOpen} closeModal={onClose} />
+            <RegisterModal isOpen={isOpen} closeModal={onClose} />
         </>
     )
 }
-
-export default NavbarMenu

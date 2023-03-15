@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import {
     Modal,
     ModalOverlay,
@@ -9,13 +10,11 @@ import {
     Button,
     useToast,
 } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 import { truncateAddress } from '@/utilities/address.utils'
 import { useConnect } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
-function GetStartedModal({ isOpen, closeModal}) {
-    const router = useRouter()
+export default function Register({ isOpen, closeModal}) {
 
     const { connect } = useConnect({
         connector: new MetaMaskConnector(),
@@ -26,7 +25,7 @@ function GetStartedModal({ isOpen, closeModal}) {
                 msg: `Account: ${truncateAddress(data.account)}`, 
                 stats: 'success'
             })
-            router.push('/user')
+            localStorage.setItem('isWalletConnected', true)
         },
         onError(error) {
             toast({
@@ -34,7 +33,6 @@ function GetStartedModal({ isOpen, closeModal}) {
                 msg: error.message, 
                 stats: 'error'
             })
-            router.push('/')
         }
     })
     
@@ -48,10 +46,6 @@ function GetStartedModal({ isOpen, closeModal}) {
             isClosable: true,
             position: 'top',
         })
-    }
-
-    const metamaskConnect = async () => {
-        await connect()
     }
 
     return (
@@ -79,7 +73,7 @@ function GetStartedModal({ isOpen, closeModal}) {
                                 <li>
                                     <button 
                                         onClick={()=>{
-                                            metamaskConnect()
+                                            connect()
                                             closeModal()
                                         }}
                                         className="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
@@ -109,6 +103,8 @@ function GetStartedModal({ isOpen, closeModal}) {
                                 Why do I need to connect with my wallet?
                             </a>
                         </div>
+
+                        <hr className="my-5"/>
                     </ModalBody>
 
                     <ModalFooter>
@@ -119,5 +115,3 @@ function GetStartedModal({ isOpen, closeModal}) {
         </>
     )
 }
-
-export default GetStartedModal
