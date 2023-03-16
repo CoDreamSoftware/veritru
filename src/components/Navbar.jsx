@@ -13,14 +13,14 @@ import {
     useDisclosure, 
 } from '@chakra-ui/react'
 import { truncateAddress } from '@/utilities/address.utils'
-import RegisterModal from '@/components/RegisterModal'
+import LoginModal from '@/components/LoginModal'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
 const navigation = [
     { name: 'Fact Check', href: '/' },
+    // { name: 'Guides', href: '/guides' },
     { name: 'Submit Article', href: '/submit-article' },
-    { name: 'Guides', href: '/guides' },
 ]
 
 export default function Navbar() {
@@ -221,7 +221,7 @@ export default function Navbar() {
                 </Transition>
             </nav>
 
-            <RegisterModal isOpen={isOpen} closeModal={onClose} />
+            <LoginModal isOpen={isOpen} closeModal={onClose} />
         </>
     )
 }
