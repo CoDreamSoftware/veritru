@@ -2,9 +2,9 @@ import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 
 import User from '@/database/models/User'
-import dbConnect from '@/database/middleware/dbConnect'
-export default NextAuth({
+import dbConnect from '@/database/lib/dbConnect'
 
+export default NextAuth({
     // Enable JSON Web Tokens since we will not store sessions in our DB
     session: {
         jwt: true,
