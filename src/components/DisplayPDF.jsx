@@ -12,7 +12,7 @@ export default function DisplayPDF ({ cid }) {
     const [pageNumber, setPageNumber] = useState(1)
 
     useEffect(() => {
-        const fetchPdf = async () => {
+        async function fetchPdf() {
             try {
                 const response = await axios.get(`https://dweb.link/ipfs/${cid}` , {
                     responseType: 'blob',

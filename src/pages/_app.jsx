@@ -1,6 +1,8 @@
 import '@/styles/globals.css'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 
+import { SessionProvider } from 'next-auth/react'
+
 import { WagmiConfig, createClient, configureChains } from 'wagmi'
 import { goerli, sepolia } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
@@ -27,12 +29,14 @@ const theme = extendTheme({
     },
 })
 
-export default function App({ Component, pageProps }) {
+export default function App({ Component, pageProps: { session, ...pageProps } }) {
     return (
-        <WagmiConfig client={client}>
-            <ChakraProvider theme={theme}>
-                <Component {...pageProps} />
-            </ChakraProvider>
-        </WagmiConfig>
+        <SessionProvider session={session}>
+            <WagmiConfig client={client}>
+                <ChakraProvider theme={theme}>
+                    <Component {...pageProps} />
+                </ChakraProvider>
+            </WagmiConfig>
+        </SessionProvider>
     )
 }

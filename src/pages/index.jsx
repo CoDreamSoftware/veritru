@@ -4,7 +4,9 @@ export default function Home() {
 
     return (
         <Layout>
-            <p>Displays homepage</p>
+            <div className="py-24">
+                <p>Displays homepage</p>
+            </div>
         </Layout>
     )
 }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { hasToken } from '@/database/middleware/checkUser'
 import DashboardLayout from '@/components/DashboardLayout'
 
 export default function User() {
@@ -17,4 +18,20 @@ export default function User() {
             </div>
         </DashboardLayout>
     )
+}
+
+// PROTECTED PAGE
+export async function getServerSideProps(context) {
+    const token = await hasToken(context.req)
+
+    if (!token) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        }
+    }
+
+    return { props: {} }
 }

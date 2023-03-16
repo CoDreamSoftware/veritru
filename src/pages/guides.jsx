@@ -3,7 +3,9 @@ import Layout from "@/components/Layout"
 export default function Guides() {
     return (
         <Layout>
-            <p>This is Guides Page</p>
+            <div className="py-24">
+                <p>This is Guides Page</p>
+            </div>
         </Layout>
     )
 }

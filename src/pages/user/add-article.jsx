@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { hasToken } from '@/database/middleware/checkUser'
 import { create } from 'ipfs-http-client'
 import { useToast, Progress } from '@chakra-ui/react'
 import { useAccount } from 'wagmi'
@@ -10,6 +11,7 @@ import Veritru from '@/contracts/veritru'
 import web3 from '@/contracts/web3'
 
 export default function SubmitArticle() {
+    const { address, isConnected } = useAccount()
     const [cid, setCid] = useState('')
     const [headline, setHeadline] = useState('')
     const [category, setCategory] = useState('')
@@ -77,43 +79,44 @@ export default function SubmitArticle() {
     }, [progress])
     
     // Execute createArticle method to blockchain
-    // const onSubmit = async (event) => {
-    //     event.preventDefault()
+    const onSubmit = async (event) => {
+        event.preventDefault()
 
-    //     setLoading(true)
-    //     const accounts = await web3.eth.getAccounts()
-    //     const createArticle = Veritru.methods
-    //         .createArticle(
-    //             cid,
-    //             headline,
-    //             category
-    //         )
-    //         .send({ from: accounts[0] })
+        // setLoading(true)
+        // const accounts = await web3.eth.getAccounts()
+        // const createArticle = Veritru.methods
+        //     .createArticle(
+        //         address,
+        //         cid,
+        //         headline,
+        //         category
+        //     )
+        //     .send({ from: accounts[0] })
 
-    //     try {
-    //         await createArticle
-    //         console.log(createArticle)
-    //         toast({
-    //             title: 'Successfully submitted article', 
-    //             stats: 'success'
-    //         })
-    //         resetForm()
-    //     } catch (error) {
-    //         toast({
-    //             title: 'Error submitting article', 
-    //             msg: error.message, 
-    //             stats: 'error'
-    //         })
-    //     }
-    //     setLoading(false)
-    // }
+        // try {
+        //     await createArticle
+        //     console.log(createArticle)
+        //     toast({
+        //         title: 'Successfully submitted article', 
+        //         stats: 'success'
+        //     })
+        //     resetForm()
+        // } catch (error) {
+        //     toast({
+        //         title: 'Error submitting article', 
+        //         msg: error.message, 
+        //         stats: 'error'
+        //     })
+        // }
+        // setLoading(false)
+    }
 
-    // const resetForm = () => {
-    //     setHeadline('')
-    //     setCategory('')
-    //     setCid('')
-    //     setFile(null)
-    // }
+    const resetForm = () => {
+        setHeadline('')
+        setCategory('')
+        setCid('')
+        setFile(null)
+    }
 
     return (
         <DashboardLayout>
@@ -122,9 +125,28 @@ export default function SubmitArticle() {
                     <h2 className="font-display font-semibold text-base text-center mb-4 mx-2 text-gray-900 dark:text-white">
                         Article Submission
                     </h2>
-                    
                     {/* <form onSubmit={onSubmit}> */}
                     <form>
+                        {/* { isConnected && 
+                            <div className="mb-5">
+                                <label
+                                    htmlFor="name"
+                                    className="mx-2 block font-normal font-display text-base text-gray-900 dark:text-white tracking-wide"
+                                >
+                                    Uploader
+                                </label>
+                                <input
+                                    value={address}
+                                    disabled
+                                    type="text"
+                                    name="title"
+                                    id="title"
+                                    placeholder="Uploader Address"
+                                    className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
+                                />
+                            </div>
+                        } */}
+
                         <div className="mb-5">
                             <label
                                 htmlFor="name"
@@ -136,9 +158,9 @@ export default function SubmitArticle() {
                                 value={cid}
                                 disabled
                                 type="text"
-                                name="title"
-                                id="title"
-                                placeholder="Generated once document uploaded"
+                                name="cid"
+                                id="cid"
+                                placeholder="Generated once document is uploaded"
                                 className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
                             />
                         </div>
@@ -155,8 +177,8 @@ export default function SubmitArticle() {
                                 value={headline}
                                 onChange={(e)=> setHeadline(e.target.value)}
                                 type="text"
-                                name="title"
-                                id="title"
+                                name="headline"
+                                id="headline"
                                 placeholder="Article Title"
                                 className="w-full rounded-lg py-2 px-3 text-sm font-normal text-black dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
                             />
@@ -174,8 +196,8 @@ export default function SubmitArticle() {
                                 value={category}
                                 onChange={(e)=>setCategory(e.target.value)}
                                 type="text"
-                                name="authors"
-                                id="authors"
+                                name="category"
+                                id="category"
                                 placeholder="Category of the Article"
                                 className="w-full rounded-lg py-2 px-3 text-sm font-normal text-black dark:text-white border border-gray-300 dark:border-white focus:border-cyan-500 bg-gray-50 outline-none"
                             />
@@ -262,4 +284,20 @@ export default function SubmitArticle() {
             </div>
         </DashboardLayout>
     )
+}
+
+// PROTECTED PAGE
+export async function getServerSideProps(context) {
+    const token = await hasToken(context.req)
+
+    if (!token) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        }
+    }
+
+    return { props: {} }
 }
