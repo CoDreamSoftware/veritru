@@ -1,13 +1,21 @@
-import { signIn } from 'next-auth/react'
-import { Router } from 'next/router'
+import { signIn, signOut } from 'next-auth/react'
 
 export const login = async (FormData) => {
     console.log(FormData)
     const { email, password } = FormData
+
     const status = await signIn('credentials', {
         redirect: false,
         email: email,
         password: password,
+    })
+    return status
+}
+
+export const logout = async () => {
+    const status = await signOut({ 
+        redirect: false, 
+        callbackUrl: '/' 
     })
     return status
 }

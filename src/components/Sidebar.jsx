@@ -1,8 +1,11 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link'
 import Image from 'next/image'
-import { useRef, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import axios from 'axios'
+import { logout } from '@/services'
+import { useRef, useState, useEffect } from 'react'
 import {
-    Avatar,
     Button,
     Drawer,
     DrawerBody,
@@ -15,9 +18,13 @@ import {
     MenuGroup, 
     MenuItem,
     useDisclosure,
+    useToast,
 } from '@chakra-ui/react'
 import { HiBars3BottomLeft } from 'react-icons/hi2'
+import { IoSettingsSharp, IoWallet } from 'react-icons/io5'
 import { MdSpaceDashboard, MdArticle, MdNoteAdd } from 'react-icons/md'
+import Avatar, { genConfig } from 'react-nice-avatar'
+
 import ConnectWallet from './ConnectWallet'
 import { truncateAddress } from '@/utilities/address.utils'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
@@ -30,11 +37,26 @@ const navigation = [
 ]
 
 export default function Sidebar() {
+    const [sessionData, setSessionData] = useState([])
+
     const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure()
     const { isOpen: isNavOpen, onOpen: onNavOpen, onClose: onNavClose } = useDisclosure()
     const navRef = useRef()
-
+    const router = useRouter()
     const { address, isConnected } = useAccount()
+
+    const toaster = useToast()
+    const toast = (value) => {
+        toaster({
+            title: value.title,
+            description: value.msg,
+            status: value.stats,
+            duration: 3000,
+            isClosable: true,
+            position: 'top',
+        })
+    }
+
     const { connect } = useConnect({
         connector: new MetaMaskConnector(),
         onSuccess() { localStorage.setItem('isWalletConnected', true) },
@@ -47,6 +69,24 @@ export default function Sidebar() {
         }
     })
 
+    async function handleLogout() {
+        const res = await logout()
+        if (res.error) {
+            toast({
+                title: 'Error!',
+                msg: res.error,
+                stats: 'error',
+            })
+        } else {
+            toast({
+                title: 'Successfully logged out',
+                msg: res.message,
+                stats: 'success',
+            })
+            router.push('/')
+        }
+    }
+
     // Persist wallet connection
     useEffect(() => {
         const connectWalletOnPageLoad = async () => {
@@ -57,6 +97,21 @@ export default function Sidebar() {
         connectWalletOnPageLoad()
     }, [])
 
+    // Always checks user session
+    useEffect(() => {
+        async function fetchSessionData() {
+            const res = await axios.get('/api/getSession')
+            if (res.data) {
+                setSessionData(res.data)
+            }
+            console.log(res.data)
+        }
+        fetchSessionData()
+    },[])
+
+    // Set Avatar
+    const config = genConfig(sessionData.email)
+    
     return (
         <nav>
             <div className="fixed top-0 z-50 w-full py-2 px-5 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 hidden md:block">
@@ -79,17 +134,11 @@ export default function Sidebar() {
                                     <p className="font-display font-normal mr-2">
                                         { truncateAddress(address) }
                                     </p>
-                                    <Avatar 
-                                        size="sm"
-                                        name={truncateAddress(address)} 
-                                        src="https://api.dicebear.com/5.x/shapes/svg?scale=50" 
-                                        alt="avatar" 
-                                    />
+                                    <IoWallet className="w-7 h-7 my-auto rounded-full shadow-lg text-cyan-600 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
                                 </div>
                             </MenuButton>
                             <MenuList>
                                 <MenuGroup title="Profile">
-                                    <MenuItem>Account</MenuItem>
                                     <MenuItem onClick={disconnect}>Disconnect</MenuItem>
                                 </MenuGroup>
                             </MenuList>
@@ -105,7 +154,7 @@ export default function Sidebar() {
                 </div>
             </div>
 
-            <div className="top-0 left-0 w-64 pt-20 h-screen hidden md:block bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+            <div className="relative top-0 left-0 w-64 pt-20 h-screen hidden md:block bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
                 <div className="h-full px-3 py-4 overflow-y-auto relative">
                     <ul className="space-y-2">
                         {navigation.map(item => { const { name, href, Icon } = item
@@ -113,7 +162,7 @@ export default function Sidebar() {
                                 <li key={name}>
                                     <Link
                                         href={href}
-                                        className="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
+                                        className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
                                     >
                                         <Icon className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
                                         <span className="ml-3">
@@ -124,6 +173,28 @@ export default function Sidebar() {
                             )
                         })}
                     </ul>
+                    
+                    <div className="absolute bottom-10 space-y-1">
+                        <div className="flex">
+                            <Avatar className="w-12 h-12 rounded-full" {...config}/>
+                            <div className="my-auto mx-2">
+                                <h5 className="text-[13px] truncate font-medium text-gray-900 dark:text-white">
+                                    {sessionData.email}
+                                </h5>
+                                <span className="text-[12px] text-gray-500 dark:text-gray-400">
+                                    Account User
+                                </span>
+                            </div>
+                            <Menu placement="top-end">
+                                <MenuButton as={Button} size="xs" colorScheme="whiteAlpha">
+                                    <IoSettingsSharp className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
+                                </MenuButton>
+                                <MenuList className="text-[12px]">
+                                    <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                </MenuList>
+                            </Menu>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -177,14 +248,32 @@ export default function Sidebar() {
                                     )
                                 })}
                             </ul>
+                            
                             <div className="absolute inset-x-0 bottom-10 px-10 py-3 space-y-1">
-                                <button 
-                                    onClick={onModalOpen}
-                                    type="button" 
-                                    className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
-                                >
-                                    Connect Wallet
-                                </button>
+                                { isConnected
+                                    ? <Menu>
+                                        <MenuButton 
+                                            as={Button}
+                                        >
+                                            <div className="flex items-center">
+                                                <p className="font-display font-normal mr-2">
+                                                    { truncateAddress(address) }
+                                                </p>
+                                                <IoWallet className="w-7 h-7 my-auto rounded-full shadow-lg text-cyan-600 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
+                                            </div>
+                                        </MenuButton>
+                                        <MenuList>
+                                            <MenuItem onClick={disconnect}>Disconnect</MenuItem>
+                                        </MenuList>
+                                    </Menu>
+                                    : <button 
+                                        onClick={onModalOpen}
+                                        type="button" 
+                                        className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
+                                    >
+                                        Connect Wallet
+                                    </button>
+                                }
                             </div>
                         </div>
                     </DrawerBody>

@@ -1,8 +1,16 @@
-import { useState, useEffect } from 'react'
-import { hasToken } from '@/services/checkUser'
+import { useSession } from "next-auth/react"
+import { useRouter } from 'next/router'
 import DashboardLayout from '@/components/DashboardLayout'
 
 export default function User() {
+    const { data: session, status } = useSession()
+    const router = useRouter()
+
+    // check user session
+    if (status === "unauthenticated") {
+        router.replace('/')
+    }
+    // otherwise, continue rendering props below
     return (
         <DashboardLayout>
             <div className="pt-20 flex items-center justify-center">
@@ -18,20 +26,4 @@ export default function User() {
             </div>
         </DashboardLayout>
     )
-}
-
-// PROTECTED PAGE
-export async function getServerSideProps(context) {
-    const token = await hasToken(context.req)
-
-    if (!token) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        }
-    }
-
-    return { props: {} }
 }

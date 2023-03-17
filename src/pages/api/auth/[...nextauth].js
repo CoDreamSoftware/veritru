@@ -35,5 +35,6 @@ export default NextAuth({
     ],
     pages: {
         signIn: 'index',
+        signOut: 'index',
     },
 })

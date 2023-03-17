@@ -1,21 +1,9 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Transition } from '@headlessui/react'
-import { 
-    Avatar, 
-    Button,
-    Menu, 
-    MenuButton, 
-    MenuList, 
-    MenuGroup, 
-    MenuItem,
-    useDisclosure, 
-} from '@chakra-ui/react'
-import { truncateAddress } from '@/utilities/address.utils'
+import { useDisclosure } from '@chakra-ui/react'
 import LoginModal from '@/components/LoginModal'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
 const navigation = [
     { name: 'Fact Check', href: '/' },
@@ -26,29 +14,6 @@ const navigation = [
 export default function Navbar() {
     const [navOpen, setNavOpen] = useState(false)
     const { isOpen, onOpen, onClose } = useDisclosure()
-
-    const { address, isConnected } = useAccount()
-    const { connect } = useConnect({
-        connector: new MetaMaskConnector(),
-        onSuccess() { localStorage.setItem('isWalletConnected', true) },
-        onError(error) { console.log(error) }
-    })
-    const { disconnect } = useDisconnect({
-        onSettled(data, error) {
-            console.log('Disconnect Settled', {data, error})
-            localStorage.setItem('isWalletConnected', false)
-        }
-    })
-
-    // Persist wallet connection
-    useEffect(() => {
-        const connectWalletOnPageLoad = async () => {
-            if (localStorage.getItem('isWalletConnected') === 'true') {
-                await connect()
-            }
-        }
-        connectWalletOnPageLoad()
-    }, [])
 
     return (
         <>
@@ -73,46 +38,14 @@ export default function Navbar() {
                                             {item.name}
                                         </Link>
                                     ))}
-
-                                    { isConnected
-                                        ? <Menu>
-                                            <MenuButton 
-                                                as={Button}
-                                            >
-                                                <div className="flex items-center">
-                                                    <p className="font-display font-normal mr-2">
-                                                        { truncateAddress(address) }
-                                                    </p>
-                                                    <Avatar 
-                                                        size="sm"
-                                                        name={truncateAddress(address)} 
-                                                        src="https://api.dicebear.com/5.x/shapes/svg?scale=50" 
-                                                        alt="avatar" 
-                                                    />
-                                                </div>
-                                            </MenuButton>
-                                            <MenuList>
-                                                <MenuGroup title="Profile">
-                                                    <MenuItem>Account</MenuItem>
-                                                    <MenuItem>
-                                                        <Link 
-                                                            onClick={disconnect} 
-                                                            href="/"
-                                                        >
-                                                            Disconnect
-                                                        </Link>
-                                                    </MenuItem>
-                                                </MenuGroup>
-                                            </MenuList>
-                                        </Menu>
-                                        : <button 
-                                            onClick={onOpen}
-                                            type="button" 
-                                            className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
-                                        >
-                                            Get Started
-                                        </button>
-                                    }
+                                    
+                                    <button 
+                                        onClick={onOpen}
+                                        type="button" 
+                                        className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
+                                    >
+                                        Get Started
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -188,34 +121,13 @@ export default function Navbar() {
                             ))}
                         </div>
                         <div className="absolute inset-x-0 bottom-28 px-10 py-3 space-y-1">
-                            { isConnected
-                                ? <>
-                                    <div className="flex items-center px-3 py-2 mt-5 mx-5">
-                                        <Avatar 
-                                            name={truncateAddress(address)} 
-                                            src="https://api.dicebear.com/5.x/shapes/svg?scale=50" 
-                                            alt="avatar" 
-                                        />
-                                        <p className="font-display ml-2 font-medium">
-                                            { truncateAddress(address) }
-                                        </p>
-                                    </div>
-                                    <Link 
-                                        href="/"
-                                        onClick={disconnect}
-                                        className="cursor-pointer bg-cyan-500 hover:bg-cyan-600 text-white block px-3 py-2 rounded-md text-base font-medium font-display text-center mx-5 mt-5"
-                                    >
-                                        Disconnect
-                                    </Link>
-                                </>
-                                : <button 
-                                    onClick={onOpen}
-                                    type="button" 
-                                    className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
-                                >
-                                    Connect Wallet
-                                </button>
-                            }
+                            <button 
+                                onClick={onOpen}
+                                type="button" 
+                                className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
+                            >
+                                Get Started
+                            </button>
                         </div>
                     </div>
                 </Transition>
