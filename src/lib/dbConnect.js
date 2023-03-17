@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-async function connectDB() {
+async function dbConnect() {
     const connectionUrl = process.env.MONGODB_URI
 
     mongoose
@@ -16,4 +16,4 @@ async function connectDB() {
     mongoose.set('strictQuery', false)
 }
 
-export default connectDB
+export default dbConnect

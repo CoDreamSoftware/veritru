@@ -1,5 +1,5 @@
 import { Fragment, useRef, useState, useEffect } from 'react'
-import { register } from '@/services'
+import { register } from '@/auth'
 
 import { Tabs, TabList, Tab, TabPanels, TabPanel, useToast } from '@chakra-ui/react'
 import { FiChevronDown, FiCheck } from 'react-icons/fi'

@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import { login } from '@/services'
+import { login } from '@/auth'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 
