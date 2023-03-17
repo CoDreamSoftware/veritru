@@ -1,6 +1,7 @@
 import { Fragment, useRef, useState, useEffect } from 'react'
-import { useRouter } from 'next/router'
-import { Tabs, TabList, Tab, TabPanels, TabPanel, } from '@chakra-ui/react'
+import { register } from '@/services'
+
+import { Tabs, TabList, Tab, TabPanels, TabPanel, useToast } from '@chakra-ui/react'
 import { FiChevronDown, FiCheck } from 'react-icons/fi'
 import { Listbox, Transition } from '@headlessui/react'
 import Layout from '@/components/Layout'
@@ -23,64 +24,80 @@ const category = [
     { name: 'Journalist', value: 2 }
 ]
 
-// Communicate with register API endpoint
-async function createUser(username, email, password, tenure, organization, role) {
-    const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({ 
-            username,
-            email,
-            password,
-            tenure,
-            organization,
-            role
-        }),
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-
-    const data = await response.json()
-
-    if(!response.ok) {
-        throw new Error(data.message || 'Something went wrong!')
-    }
-
-    return data
-}
-
 export default function CreateAccount() {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    const [confirmPassword, setConfirmPassword] = useState('')
     const [yrs, setYrs] = useState(yrsExp[0])
     const [org, setOrg] = useState(organization[0])
     const [role, setRole] = useState(category[0])
 
-    const router = useRouter()
+    const [error, setError] = useState({ email: '', password: '', username: '' })
+
     const tabRef = useRef()
 
     function handleTab() {
         tabRef.current.focus()
     }
 
+    const toaster = useToast()
+    const toast = (value) => {
+        toaster({
+            title: value.title,
+            description: value.msg,
+            status: value.stats,
+            duration: 3000,
+            isClosable: true,
+            position: 'top',
+        })
+    }
+
     async function handleSubmit(event) {
         event.preventDefault()
-
-        try {
-            await createUser(
-                username,
-                email,
-                password,
-                yrs.name,
-                org.name,
-                role.name
-            )
-            router.push('/user')
-        } catch (error) {
-            console.log(error)
+        if (!email) {
+            setError({ ...error, email: "Email is required" })
+            return
         }
+        if (!password) {
+            setError({ ...error, password: "Password is required" })
+            return
+        }
+        if (!username) {
+            setError({ ...error, username: "Username is required" })
+            return
+        }
+
+        const res = await register({
+            username: username,
+            email: email,
+            password: password,
+            tenure: yrs.name.toString(),
+            organization: org.name.toString(),
+            role: role.name.toString(),
+        })
+        if (res.success) {
+            toast({
+                title: 'Success!',
+                msg: res.message,
+                stats: 'success',
+            })
+            resetForm()
+        } else {
+            toast({
+                title: 'Error!',
+                msg: res.message,
+                stats: 'error',
+            })
+        }
+    }
+
+    function resetForm () {
+        setUsername('')
+        setEmail('')
+        setPassword('')
+        setYrs(yrsExp[0])
+        setOrg(organization[0])
+        setRole(category[0])
     }
 
     useEffect(() => {
@@ -155,25 +172,6 @@ export default function CreateAccount() {
                                                 type="password"
                                                 name="password"
                                                 id="password"
-                                                placeholder="••••••••"
-                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-800 focus:border-gray-800 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                                required
-                                            />
-                                        </div>
-
-                                        <div className="mb-5">
-                                            <label
-                                                htmlFor="subject"
-                                                className="mx-2 my-2 block font-normal font-display text-base text-gray-900 dark:text-white tracking-wide"
-                                            >
-                                                Confirm Password
-                                            </label>
-                                            <input
-                                                value={confirmPassword}
-                                                onChange={(e)=> setConfirmPassword(e.target.value)}
-                                                type="password"
-                                                name="confirmPassword"
-                                                id="confirmPassword"
                                                 placeholder="••••••••"
                                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-800 focus:border-gray-800 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                                 required

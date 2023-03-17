@@ -1,71 +1,39 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-
-import User from '@/database/models/User'
-import dbConnect from '@/database/lib/dbConnect'
+import connectDB from '@/lib/connectDB'
+import User from '@/models/User'
+import { compare } from 'bcryptjs'
 
 export default NextAuth({
-    // Enable JSON Web Tokens since we will not store sessions in our DB
+    //Configure JWT
     session: {
         jwt: true,
     },
-    // Here we add our login providers - this is where you could add Google or Github SSO as well
+
     providers: [
         CredentialsProvider({
             name: 'credentials',
-            // The credentials object is what's used to generate Next Auths default login page - We will not use it however.
-            credentials: {
-                email: { label: 'Email', type: 'email' },
-                password: { label: 'Password', type: 'password' },
-            },
-            // Authorize callback is ran upon calling the signin function
-            authorize: async (credentials) => {
-                dbConnect()
-
-                // Try to find the user and also return the password field
-                const user = await User.findOne({
-                    email: credentials.email,
-                }).select('+password')
-
+            credentials: {},
+            async authorize(credentials, req) {
+                await connectDB()
+                const { email, password } = credentials
+                // Add logic here to look up the user from the credentials supplied
+                const user = await User.findOne({ email })
+                console.log(user)
                 if (!user) {
-                    throw new Error('No user with a matching email was found.')
+                    throw new Error('No user found with the email')
                 }
 
-                // Use the comparePassword method we defined in our user.js Model file to authenticate
-                const pwValid = await user.comparePassword(credentials.password)
-
-                if (!pwValid) {
-                    throw new Error('Your password is invalid')
+                const checkPassword = await compare(password, user.password)
+                console.log(checkPassword)
+                if (!checkPassword) {
+                    throw new Error('Password doesnt match')
                 }
-
                 return user
             },
         }),
     ],
-    // All of this is just to add user information to be accessible for our app in the token/session
-    callbacks: {
-        // We can pass in additional information from the user document MongoDB returns
-        // This could be avatars, role, display name, etc...
-        async jwt({ token, user }) {
-            if (user) {
-                token.user = {
-                    _id: user._id,
-                    email: user.email,
-                    role: user.role,
-                }
-            }
-            return token
-        },
-        // If we want to access our extra user info from sessions we have to pass it the token here to get them in sync:
-        session: async ({ session, token }) => {
-            if (token) {
-                session.user = token.user
-            }
-            return session
-        },
-    },
     pages: {
-        // Here you can define your own custom pages for login, recover password, etc.
-        signIn: '/authpage', // we are going to use a custom login page (we'll create this in just a second)
+        signIn: 'index',
     },
 })

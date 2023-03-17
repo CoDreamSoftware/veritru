@@ -1,7 +1,8 @@
 import Link from 'next/link'
-import { signIn } from 'next-auth/react'
+import { login } from '@/services'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+
 import {
     Modal,
     ModalOverlay,
@@ -15,8 +16,8 @@ import {
 } from '@chakra-ui/react'
 
 export default function LoginModal({ isOpen, closeModal }) {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [formData, setFormData] = useState({ email: '', password: ''})
+    const [error, setError] = useState({ email: '', password: '' })
     const router = useRouter()
 
     const toaster = useToast()
@@ -31,27 +32,31 @@ export default function LoginModal({ isOpen, closeModal }) {
         })
     }
 
-    async function handleLogin(event) {
+    async function handleSubmit(event) {
         event.preventDefault()
+        if (!formData.email) {
+            setError({ ...error, email: "Email is required"})
+            return
+        }
+        if (!formData.password) {
+            setError({ ...error, password: "Password is required"})
+            return
+        }
 
-        try {
-            await signIn('credentials', {
-                redirect: '/user',
-                email: email,
-                password: password,
+        const res = await login(formData)
+        if (res.error) {
+            toast({
+                title: 'Error!',
+                msg: res.error,
+                stats: 'error',
             })
+        } else {
             toast({
                 title: 'Success!',
-                msg: 'You have successfully logged in',
+                msg: res.message,
                 stats: 'success',
             })
             router.push('/user')
-        } catch (error) {
-            toast({
-                title: 'Error!',
-                msg: 'Invalid credentials!',
-                stats: 'error',
-            })
         }
     }
 
@@ -67,7 +72,7 @@ export default function LoginModal({ isOpen, closeModal }) {
 
                     <ModalBody>
                         <div className="px-6 py-6 lg:px-8">
-                            <form className="space-y-6">
+                            <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
                                     <label
                                         htmlFor="email"
@@ -76,15 +81,14 @@ export default function LoginModal({ isOpen, closeModal }) {
                                         Email
                                     </label>
                                     <input
-                                        value={email}
-                                        onChange={(e)=> setEmail(e.target.value)}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         type="email"
                                         name="email"
                                         id="email"
                                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                         placeholder="name@company.com"
-                                        required
                                     />
+                                    { error.email && <p className="text-sm text-red-500">{error.email}</p> }
                                 </div>
                                 <div>
                                     <label
@@ -94,19 +98,17 @@ export default function LoginModal({ isOpen, closeModal }) {
                                         Password
                                     </label>
                                     <input
-                                        value={password}
-                                        onChange={(e)=> setPassword(e.target.value)}
+                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                         type="password"
                                         name="password"
                                         id="password"
                                         placeholder="••••••••"
                                         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                                        required
                                     />
+                                    { error.password && <p className="text-sm text-red-500">{error.password}</p> }
                                 </div>
                                 <button
-                                    onClick={handleLogin}
-                                    type="button"
+                                    type="submit"
                                     className="w-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display"
                                 >
                                     Login account
