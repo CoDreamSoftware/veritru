@@ -1,4 +1,4 @@
-import { hasTokenMiddleware } from '@/database/middleware/checkUser'
+import { hasTokenMiddleware } from '@/services/checkUser'
 import handler from '@/database/middleware/handler'
 
 handler.use(hasTokenMiddleware).get(protectedAPI)

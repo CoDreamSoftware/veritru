@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { hasToken } from '@/database/middleware/checkUser'
+import { hasToken } from '@/services/checkUser'
 import { create } from 'ipfs-http-client'
 import { useToast, Progress } from '@chakra-ui/react'
 import { useAccount } from 'wagmi'

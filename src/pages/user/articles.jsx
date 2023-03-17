@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { hasToken } from '@/database/middleware/checkUser'
+import { hasToken } from '@/services/checkUser'
 import DashboardLayout from '@/components/DashboardLayout'
 
 export default function Articles() {

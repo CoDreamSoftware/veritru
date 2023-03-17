@@ -90,14 +90,7 @@ export default function Sidebar() {
                             <MenuList>
                                 <MenuGroup title="Profile">
                                     <MenuItem>Account</MenuItem>
-                                    <MenuItem>
-                                        <Link 
-                                            onClick={disconnect} 
-                                            href="/"
-                                        >
-                                            Disconnect
-                                        </Link>
-                                    </MenuItem>
+                                    <MenuItem onClick={disconnect}>Disconnect</MenuItem>
                                 </MenuGroup>
                             </MenuList>
                         </Menu>
