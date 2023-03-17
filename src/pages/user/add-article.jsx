@@ -1,9 +1,11 @@
 import Link from 'next/link'
+import { useSession } from "next-auth/react"
+import { useRouter } from 'next/router'
 import { useState, useEffect } from 'react'
-import { hasToken } from '@/services/checkUser'
 import { create } from 'ipfs-http-client'
-import { useToast, Progress } from '@chakra-ui/react'
 import { useAccount } from 'wagmi'
+
+import { useToast, Progress } from '@chakra-ui/react'
 import DashboardLayout from '@/components/DashboardLayout'
 import DisplayPDF from '@/components/DisplayPDF'
 
@@ -11,6 +13,9 @@ import Veritru from '@/contracts/veritru'
 import web3 from '@/contracts/web3'
 
 export default function SubmitArticle() {
+    const { data: session, status } = useSession()
+    const router = useRouter()
+
     const { address, isConnected } = useAccount()
     const [cid, setCid] = useState('')
     const [headline, setHeadline] = useState('')
@@ -117,6 +122,12 @@ export default function SubmitArticle() {
         setCid('')
         setFile(null)
     }
+
+    // check user session
+    if (status === "unauthenticated") {
+        router.replace('/')
+    }
+    // otherwise, continue rendering props below
 
     return (
         <DashboardLayout>
@@ -286,18 +297,17 @@ export default function SubmitArticle() {
     )
 }
 
-// PROTECTED PAGE
-export async function getServerSideProps(context) {
-    const token = await hasToken(context.req)
+// export async function getServerSideProps(context) {
+//     const token = await hasToken(context.req)
 
-    if (!token) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: false,
-            },
-        }
-    }
+//     if (!token) {
+//         return {
+//             redirect: {
+//                 destination: '/',
+//                 permanent: false,
+//             },
+//         }
+//     }
 
-    return { props: {} }
-}
+//     return { props: {} }
+// }
