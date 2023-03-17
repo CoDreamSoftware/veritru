@@ -1,6 +1,6 @@
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import connectDB from '@/lib/connectDB'
+import dbConnect from '@/lib/dbConnect'
 import User from '@/models/User'
 import { compare } from 'bcryptjs'
 
@@ -15,7 +15,7 @@ export default NextAuth({
             name: 'credentials',
             credentials: {},
             async authorize(credentials, req) {
-                await connectDB()
+                await dbConnect()
                 const { email, password } = credentials
                 // Add logic here to look up the user from the credentials supplied
                 const user = await User.findOne({ email })

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { hash } from 'bcryptjs'
-import connectDB from '@/lib/connectDB'
+import dbConnect from '@/lib/dbConnect'
 import Joi from 'joi'
 import User from '@/models/User'
 
@@ -14,7 +14,7 @@ const schema = Joi.object({
 })
 
 export default async (req, res) => {
-    await connectDB()
+    await dbConnect()
 
     const { 
         username,
