@@ -36,7 +36,7 @@ export default function SubmitArticle() {
     })
 
     const toaster = useToast()
-    const toast = (value) => {
+    function toast (value) {
         toaster({
             title: value.title,
             description: value.msg,
@@ -47,7 +47,7 @@ export default function SubmitArticle() {
         })
     }
 
-    const saveToIpfs = async (event) => {
+    async function saveToIpfs (event) {
         event.preventDefault()
         const file = event.target.files[0]
         setFile(file)
@@ -79,7 +79,7 @@ export default function SubmitArticle() {
     }, [progress])
     
     // Execute createArticle method to blockchain
-    const onSubmit = async (event) => {
+    async function onSubmit (event) {
         event.preventDefault()
 
         // setLoading(true)
@@ -111,7 +111,7 @@ export default function SubmitArticle() {
         // setLoading(false)
     }
 
-    const resetForm = () => {
+    function resetForm () {
         setHeadline('')
         setCategory('')
         setCid('')

@@ -41,7 +41,7 @@ export default function CreateAccount() {
     }
 
     const toaster = useToast()
-    const toast = (value) => {
+    function toast (value) {
         toaster({
             title: value.title,
             description: value.msg,

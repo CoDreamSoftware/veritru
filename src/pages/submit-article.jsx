@@ -31,7 +31,7 @@ export default function SubmitArticle() {
     })
 
     const toaster = useToast()
-    const toast = (value) => {
+    function toast (value) {
         toaster({
             title: value.title,
             description: value.msg,
@@ -42,7 +42,7 @@ export default function SubmitArticle() {
         })
     }
 
-    const saveToIpfs = async (event) => {
+    async function saveToIpfs (event) {
         event.preventDefault()
         const file = event.target.files[0]
         setFile(file)
@@ -73,7 +73,7 @@ export default function SubmitArticle() {
         console.log(`Upload Progress: ${progress}`)
     }, [progress])
     
-    const onSubmit = async (event) => {
+    async function onSubmit (event) {
         event.preventDefault()
 
         setLoading(true)
@@ -81,7 +81,7 @@ export default function SubmitArticle() {
         setLoading(false)
     }
 
-    const resetForm = () => {
+    async function resetForm () {
         setCid('')
         setHeadline('')
         setCategory('')
