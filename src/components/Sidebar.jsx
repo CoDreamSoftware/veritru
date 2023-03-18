@@ -2,8 +2,8 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import axios from 'axios'
-import { logout } from '@/auth'
+import { logout } from '@/services/auth'
+import { useSession } from "next-auth/react"
 import { useRef, useState, useEffect } from 'react'
 import {
     Button,
@@ -37,6 +37,7 @@ const navigation = [
 ]
 
 export default function Sidebar() {
+    const { data: session, status } = useSession()
     const [sessionData, setSessionData] = useState([])
 
     const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure()
@@ -100,11 +101,8 @@ export default function Sidebar() {
     // Always checks user session
     useEffect(() => {
         async function fetchSessionData() {
-            const res = await axios.get('/api/getSession')
-            if (res.data) {
-                setSessionData(res.data)
-            }
-            console.log(res.data)
+            setSessionData(session.user)
+            console.log(session.user)
         }
         fetchSessionData()
     },[])
@@ -154,8 +152,8 @@ export default function Sidebar() {
                 </div>
             </div>
 
-            <div className="relative top-0 left-0 w-64 pt-20 h-screen hidden md:block bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
-                <div className="h-full px-3 py-4 overflow-y-auto relative">
+            <div className="fixed z-20 h-screen top-0 left-0 w-64 pt-20 hidden md:block bg-gray-50 dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700">
+                <div className="px-3 py-4">
                     <ul className="space-y-2">
                         {navigation.map(item => { const { name, href, Icon } = item
                             return (
@@ -174,7 +172,7 @@ export default function Sidebar() {
                         })}
                     </ul>
                     
-                    <div className="absolute bottom-10 space-y-1">
+                    <div className="fixed bottom-10 space-y-1">
                         <div className="flex">
                             <Avatar className="w-12 h-12 rounded-full" {...config}/>
                             <div className="my-auto mx-2">
@@ -249,6 +247,28 @@ export default function Sidebar() {
                                 })}
                             </ul>
                             
+                            <div className="fixed bottom-28 space-y-1">
+                                <div className="flex">
+                                    <Avatar className="w-12 h-12 rounded-full" {...config}/>
+                                    <div className="my-auto mx-2">
+                                        <h5 className="text-[13px] truncate font-medium text-gray-900 dark:text-white">
+                                            {sessionData.email}
+                                        </h5>
+                                        <span className="text-[12px] text-gray-500 dark:text-gray-400">
+                                            Account User
+                                        </span>
+                                    </div>
+                                    <Menu placement="top-end">
+                                        <MenuButton as={Button} size="xs" colorScheme="whiteAlpha">
+                                            <IoSettingsSharp className="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
+                                        </MenuButton>
+                                        <MenuList className="text-[12px]">
+                                            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+                                        </MenuList>
+                                    </Menu>
+                                </div>
+                            </div>
+
                             <div className="absolute inset-x-0 bottom-10 px-10 py-3 space-y-1">
                                 { isConnected
                                     ? <Menu>
