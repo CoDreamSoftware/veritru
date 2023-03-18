@@ -1,6 +1,11 @@
 /** @type {import('next').NextConfig} */
+
+const isProd = process.env.NODE_ENV === 'production'
+
 const nextConfig = {
     reactStrictMode: true,
+    compiler: { removeConsole: isProd ? true : false },
+    assetPrefix: isProd ? 'https://veritru.vercel.app' : 'http://localhost:3000',
     env: {
         INFURA_API_KEY: process.env.INFURA_API_KEY,
         INFURA_IPFS_ID: process.env.INFURA_IPFS_ID,
