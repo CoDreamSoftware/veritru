@@ -1,7 +1,9 @@
+import { assetPrefix } from '@/next/next.config'
+
 // POST method that adds a new entry in mongodb
 export async function createArticle(FormData) {
     try {
-        const res = await fetch('http://localhost:3000/api/articles/create', {
+        const res = await fetch(`${assetPrefix}/api/articles/create`, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -17,9 +19,7 @@ export async function createArticle(FormData) {
 
 // GET method that fetches all entries from mongodb
 export async function getArticles() {
-    const res = await fetch('http://localhost:3000/api/articles/get', {
-        method: 'GET',
-    })
+    const res = await fetch(`${assetPrefix}/api/articles/get`)
     const data = res.json()
     return data
 }
