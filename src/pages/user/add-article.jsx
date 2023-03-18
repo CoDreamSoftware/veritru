@@ -15,12 +15,11 @@ export default function AddArticle() {
 
     const fileInputRef = useRef(null)
     const [file, setFile] = useState(null)
-    const [form, setForm] = useState({
-        ipfs_cid: '',
-        headline: '',
-        category: '',
-        short_desc: '',
-    })
+    const [cid, setCid] = useState('')
+    const [headline, setHeadline] = useState('')
+    const [category, setCategory] = useState('')
+    const [shortDesc, setShortDesc] = useState('')
+    
     const [error, setError] = useState({})
     const [progress, setProgress] = useState(0)
     const [isUploading, setIsUploading] = useState(false)
@@ -66,7 +65,7 @@ export default function AddArticle() {
                 progress: (prog) => setProgress((prog / file.size)*100)
             })
             const fileUrl = `https://veritru.infura-ipfs.io/ipfs/${added.path}`
-            setForm({ ...form, ipfs_cid: added.path })
+            setCid(added.path)
             toast({
                 title: 'Upload Success', 
                 msg: `File Url: ${fileUrl.substring(0,20) + "..."}`, 
@@ -84,26 +83,25 @@ export default function AddArticle() {
 
     useEffect(() => {
         console.log(`Upload Progress: ${progress}`)
-        console.log(session)
-    }, [progress, session])
+    }, [progress])
     
 
     async function handleSubmit (event) {
         event.preventDefault()
         let errors = {}
         // Check validations
-        if (!form.ipfs_cid) errors.ipfs_cid = 'Invalid IPFS CID, upload your document!'
-        if (!form.headline) errors.headline = 'Headline is required!'
-        if (!form.category) errors.category = 'Category is required!'
-        if (!form.short_desc) errors.short_desc = 'Short Description is required!'
+        if (!cid) errors.cid = 'Invalid IPFS CID, upload your document!'
+        if (!headline) errors.headline = 'Headline is required!'
+        if (!category) errors.category = 'Category is required!'
+        if (!shortDesc) errors.shortDesc = 'Short Description is required!'
         setError(errors)
 
         setLoading(true)
         const res = await createArticle({
-            ipfs_cid: form.ipfs_cid,
-            headline: form.headline,
-            category: form.category,
-            short_desc: form.short_desc,
+            ipfs_cid: cid,
+            headline: headline,
+            category: category,
+            short_desc: shortDesc,
             result: 'Undetermined',
         })
         console.log(res)
@@ -113,8 +111,8 @@ export default function AddArticle() {
                 msg: res.message,
                 stats: 'success',
             })
-            resetForm()
             setLoading(false)
+            resetForm()
         } else {
             toast({
                 title: 'Error!',
@@ -127,16 +125,21 @@ export default function AddArticle() {
 
     function resetForm () {
         setFile(null)
-        setForm({
-            headline: '',
-            category: '',
-            short_desc: '',
-        })
+        setCid('')
+        setHeadline('')
+        setCategory('')
+        setShortDesc('')
     }
 
-    function resetFileInput () {
-        fileInputRef.current.value = ''
+    function resetFileInput (event) {
+        event.preventDefault()
+        setFile(null)
+        fileInputRef.current.value = null
     }
+
+    useEffect(() => {
+        console.log(file, cid, headline, category, shortDesc)
+    }, [file, cid, headline, category, shortDesc])
 
     // check user session
     if (status === "unauthenticated") {
@@ -147,7 +150,7 @@ export default function AddArticle() {
     return (
         <DashboardLayout>
             <div className="h-full flex items-center justify-center px-5 pt-28 pb-5">
-                <div className="mx-auto w-full max-w-[635px] h-full">
+            <div className="mx-auto w-full max-w-[635px] h-full">
                     <h2 className="font-display font-semibold text-base text-center mb-4 mx-2 text-gray-900 dark:text-white">
                         Article Submission
                     </h2>
@@ -160,15 +163,15 @@ export default function AddArticle() {
                                 IPFS CID
                             </label>
                             <input
-                                value={form.ipfs_cid}
+                                value={cid}
                                 disabled
                                 type="text"
-                                name="ipfs_cid"
-                                id="ipfs_cid"
+                                name="cid"
+                                id="cid"
                                 placeholder="Auto generated once document is uploaded"
                                 className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-[2px] focus:border-cyan-500 bg-gray-50 outline-none"
                             />
-                            { !form.ipfs_cid && error.ipfs_cid && <p className="text-sm text-red-500">{error.ipfs_cid}</p> }
+                            { !cid && error.cid && <p className="text-sm text-red-500">{error.cid}</p> }
                         </div>
 
                         <div className="mb-5">
@@ -180,8 +183,9 @@ export default function AddArticle() {
                             </label>
                             <span className="mb-2 mx-2 block font-display text-[.775rem] text-gray-400 dark:text-white">Required</span>
                             <input
+                                value={headline}
                                 onChange={(e) => {
-                                    setForm({ ...form, headline: e.target.value })
+                                    setHeadline(e.target.value)
                                     setError({ ...error, headline: ''})
                                 }}
                                 type="text"
@@ -202,8 +206,9 @@ export default function AddArticle() {
                             </label>
                             <span className="mb-2 mx-2 block font-display text-[.775rem] text-gray-400 dark:text-white">Required</span>
                             <input
+                                value={category}
                                 onChange={(e) => {
-                                    setForm({ ...form, category: e.target.value })
+                                    setCategory(e.target.value)
                                     setError({ ...error, category: ''})
                                 }}
                                 type="text"
@@ -222,19 +227,21 @@ export default function AddArticle() {
                             >
                                 Short Description
                             </label>
+                            <span className="mb-2 mx-2 block font-display text-[.775rem] text-gray-400 dark:text-white">Required</span>
                             <textarea
+                                value={shortDesc}
                                 onChange={(e) => {
-                                    setForm({ ...form, short_desc: e.target.value })
-                                    setError({ ...error, short_desc: ''})
+                                    setShortDesc(e.target.value)
+                                    setError({ ...error, shortDesc: ''})
                                 }}
                                 row="10"
                                 type="text"
                                 name="short_desc"
                                 id="short_desc"
                                 placeholder="Type your short description here..."
-                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-[3px] focus:border-cyan-500 bg-gray-50 outline-none"
+                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-900 dark:text-white border border-gray-300 dark:border-white focus:border-[3px] focus:border-cyan-500 bg-gray-50 outline-none"
                             />
-                            { error.short_desc && <p className="text-sm text-red-500">{error.short_desc}</p> }
+                            { error.shortDesc && <p className="text-sm text-red-500">{error.shortDesc}</p> }
                         </div>
 
                         {file ? (
@@ -244,7 +251,7 @@ export default function AddArticle() {
                                         <span className="truncate pr-3 text-base font-medium text-gray-900">
                                             {file.name}
                                         </span>
-                                        <button id="close-btn" className="text-gray-900">
+                                        <button onClick={resetFileInput} id="close-btn" className="text-gray-900">
                                             <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M0.279337 0.279338C0.651787 -0.0931121 1.25565 -0.0931121 1.6281 0.279338L9.72066 8.3719C10.0931 8.74435 10.0931 9.34821 9.72066 9.72066C9.34821 10.0931 8.74435 10.0931 8.3719 9.72066L0.279337 1.6281C-0.0931125 1.25565 -0.0931125 0.651788 0.279337 0.279338Z" fill="currentColor"/><path fillRule="evenodd" clipRule="evenodd" d="M0.279337 9.72066C-0.0931125 9.34821 -0.0931125 8.74435 0.279337 8.3719L8.3719 0.279338C8.74435 -0.0931127 9.34821 -0.0931123 9.72066 0.279338C10.0931 0.651787 10.0931 1.25565 9.72066 1.6281L1.6281 9.72066C1.25565 10.0931 0.651787 10.0931 0.279337 9.72066Z" fill="currentColor" /></svg>
                                         </button>
                                     </div>
@@ -254,6 +261,8 @@ export default function AddArticle() {
                                         </div>
                                     }
                                 </div>
+                                
+                                <DisplayPDF cid={cid}/>
                             </div>
                         ) : (
                             <div className="mb-5">
@@ -277,14 +286,13 @@ export default function AddArticle() {
                                             id="dropzone-file" 
                                             type="file" 
                                             className="hidden"
+                                            value=""
                                         />
                                     </label>
                                 </div> 
                             </div>
                         )}
 
-                        <DisplayPDF cid={form.ipfs_cid}/>
-                        
                         <div className="flex w-full flex-row-reverse mt-5">
                             <button
                                 onClick={handleSubmit}
@@ -306,7 +314,7 @@ export default function AddArticle() {
                                 )}
                             </button>
                             <Link 
-                                href="/user"
+                                href="/"
                                 type="button" 
                                 className="text-gray-600 bg-white border border-gray-300 focus:outline-none hover:bg-gray-200 focus:ring-2 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mx-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                                 Cancel

@@ -1,27 +1,32 @@
 import Link from 'next/link'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { create } from 'ipfs-http-client'
+import { createArticle } from '@/services/articles'
+
 import { useToast, Progress } from '@chakra-ui/react'
-import Layout from '@/components/Layout'
 import DisplayPDF from '@/components/DisplayPDF'
+import Layout from '@/components/Layout'
 
 export default function SubmitArticle() {
-
+    const fileInputRef = useRef(null)
+    const [file, setFile] = useState(null)
     const [cid, setCid] = useState('')
     const [headline, setHeadline] = useState('')
     const [category, setCategory] = useState('')
-    const [content, setContent] = useState('')
-    const [file, setFile] = useState(null)
-
+    const [shortDesc, setShortDesc] = useState('')
+    
+    const [error, setError] = useState({})
     const [progress, setProgress] = useState(0)
     const [isUploading, setIsUploading] = useState(false)
     const [loading, setLoading] = useState(false)
 
+    // Declare IPFS Credentials
     const projectId = process.env.INFURA_IPFS_ID
     const projectSecret = process.env.INFURA_IPFS_SECRET
     const auth =
         'Basic ' + Buffer.from(projectId + ':' + projectSecret).toString('base64')
 
+    // Set IPFS Credentials as headers
     const IPFS = create({
         host: 'ipfs.infura.io',
         port: 5001,
@@ -43,13 +48,14 @@ export default function SubmitArticle() {
         })
     }
 
+    // Upload article document to Infura IPFS dedicated server
     async function saveToIpfs (event) {
         event.preventDefault()
         const file = event.target.files[0]
         setFile(file)
 
+        setIsUploading(true)
         try {
-            setIsUploading(true)
             const added = await IPFS.add(file, {
                 progress: (prog) => setProgress((prog / file.size)*100)
             })
@@ -60,7 +66,6 @@ export default function SubmitArticle() {
                 msg: `File Url: ${fileUrl.substring(0,20) + "..."}`, 
                 stats: 'success'
             })
-            setIsUploading(false)
         } catch (error) {
             toast({
                 title: 'Error uploading file', 
@@ -68,35 +73,76 @@ export default function SubmitArticle() {
                 stats: 'error'
             })
         }
+        setIsUploading(false)
     }
 
     useEffect(() => {
         console.log(`Upload Progress: ${progress}`)
     }, [progress])
     
-    async function onSubmit (event) {
+
+    async function handleSubmit (event) {
         event.preventDefault()
+        let errors = {}
+        // Check validations
+        if (!cid) errors.cid = 'Invalid IPFS CID, upload your document!'
+        if (!headline) errors.headline = 'Headline is required!'
+        if (!category) errors.category = 'Category is required!'
+        if (!shortDesc) errors.shortDesc = 'Short Description is required!'
+        setError(errors)
 
         setLoading(true)
-        
-        setLoading(false)
+        const res = await createArticle({
+            ipfs_cid: cid,
+            headline: headline,
+            category: category,
+            short_desc: shortDesc,
+            result: 'Undetermined',
+        })
+        console.log(res)
+        if (res.success) {
+            toast({
+                title: 'Success!',
+                msg: res.message,
+                stats: 'success',
+            })
+            setLoading(false)
+            resetForm()
+        } else {
+            toast({
+                title: 'Error!',
+                msg: res.message,
+                stats: 'error',
+            })
+            setLoading(false)
+        }
     }
 
-    async function resetForm () {
+    function resetForm () {
+        setFile(null)
         setCid('')
         setHeadline('')
         setCategory('')
-        setFile(null)
+        setShortDesc('')
     }
+
+    function resetFileInput (event) {
+        event.preventDefault()
+        setFile(null)
+        fileInputRef.current.value = null
+    }
+
+    useEffect(() => {
+        console.log(file, cid, headline, category, shortDesc)
+    }, [file, cid, headline, category, shortDesc])
 
     return (
         <Layout>
-            <div className="h-full flex items-center justify-center px-5 pt-32">
+            <div className="h-full flex items-center justify-center px-5 pt-32 pb-10">
                 <div className="mx-auto w-full max-w-[635px] h-full">
                     <h2 className="font-display font-semibold text-base text-center mb-4 mx-2 text-gray-900 dark:text-white">
                         Article Submission
                     </h2>
-                    {/* <form onSubmit={onSubmit}> */}
                     <form>
                         <div className="mb-5">
                             <label
@@ -114,6 +160,7 @@ export default function SubmitArticle() {
                                 placeholder="Auto generated once document is uploaded"
                                 className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-[2px] focus:border-cyan-500 bg-gray-50 outline-none"
                             />
+                            { !cid && error.cid && <p className="text-sm text-red-500">{error.cid}</p> }
                         </div>
 
                         <div className="mb-5">
@@ -126,13 +173,17 @@ export default function SubmitArticle() {
                             <span className="mb-2 mx-2 block font-display text-[.775rem] text-gray-400 dark:text-white">Required</span>
                             <input
                                 value={headline}
-                                onChange={(e)=> setHeadline(e.target.value)}
+                                onChange={(e) => {
+                                    setHeadline(e.target.value)
+                                    setError({ ...error, headline: ''})
+                                }}
                                 type="text"
                                 name="headline"
                                 id="headline"
                                 placeholder="Article Title"
                                 className="w-full rounded-lg py-2 px-3 text-sm font-normal text-black dark:text-white border border-gray-300 dark:border-white focus:border-[3px] focus:border-cyan-500 bg-gray-50 outline-none"
                             />
+                            { error.headline && <p className="text-sm text-red-500">{error.headline}</p> }
                         </div>
 
                         <div className="mb-5">
@@ -145,13 +196,17 @@ export default function SubmitArticle() {
                             <span className="mb-2 mx-2 block font-display text-[.775rem] text-gray-400 dark:text-white">Required</span>
                             <input
                                 value={category}
-                                onChange={(e)=>setCategory(e.target.value)}
+                                onChange={(e) => {
+                                    setCategory(e.target.value)
+                                    setError({ ...error, category: ''})
+                                }}
                                 type="text"
                                 name="category"
                                 id="category"
                                 placeholder="Category of the Article"
                                 className="w-full rounded-lg py-2 px-3 text-sm font-normal text-black dark:text-white border border-gray-300 dark:border-white focus:border-[3px] focus:border-cyan-500 bg-gray-50 outline-none"
                             />
+                            { error.category && <p className="text-sm text-red-500">{error.category}</p> }
                         </div>
 
                         <div className="mb-5">
@@ -159,21 +214,46 @@ export default function SubmitArticle() {
                                 htmlFor="name"
                                 className="mx-2 block font-normal font-display text-base text-gray-900 dark:text-white tracking-wide"
                             >
-                                Content
+                                Short Description
                             </label>
+                            <span className="mb-2 mx-2 block font-display text-[.775rem] text-gray-400 dark:text-white">Required</span>
                             <textarea
-                                value={content}
-                                onChange={(e)=> setContent(e.target.value)}
+                                value={shortDesc}
+                                onChange={(e) => {
+                                    setShortDesc(e.target.value)
+                                    setError({ ...error, shortDesc: ''})
+                                }}
                                 row="10"
                                 type="text"
-                                name="content"
-                                id="content"
-                                placeholder="Type your content here..."
-                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-500 dark:text-white border border-gray-300 dark:border-white focus:border-[3px] focus:border-cyan-500 bg-gray-50 outline-none"
+                                name="short_desc"
+                                id="short_desc"
+                                placeholder="Type your short description here..."
+                                className="w-full rounded-lg py-2 px-3 text-sm font-normal text-gray-900 dark:text-white border border-gray-300 dark:border-white focus:border-[3px] focus:border-cyan-500 bg-gray-50 outline-none"
                             />
+                            { error.shortDesc && <p className="text-sm text-red-500">{error.shortDesc}</p> }
                         </div>
 
-                        {!file &&
+                        {file ? (
+                            <div>
+                                <div className="rounded-md bg-gray-200 py-4 px-8">
+                                    <div className="flex items-center justify-between">
+                                        <span className="truncate pr-3 text-base font-medium text-gray-900">
+                                            {file.name}
+                                        </span>
+                                        <button onClick={resetFileInput} id="close-btn" className="text-gray-900">
+                                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M0.279337 0.279338C0.651787 -0.0931121 1.25565 -0.0931121 1.6281 0.279338L9.72066 8.3719C10.0931 8.74435 10.0931 9.34821 9.72066 9.72066C9.34821 10.0931 8.74435 10.0931 8.3719 9.72066L0.279337 1.6281C-0.0931125 1.25565 -0.0931125 0.651788 0.279337 0.279338Z" fill="currentColor"/><path fillRule="evenodd" clipRule="evenodd" d="M0.279337 9.72066C-0.0931125 9.34821 -0.0931125 8.74435 0.279337 8.3719L8.3719 0.279338C8.74435 -0.0931127 9.34821 -0.0931123 9.72066 0.279338C10.0931 0.651787 10.0931 1.25565 9.72066 1.6281L1.6281 9.72066C1.25565 10.0931 0.651787 10.0931 0.279337 9.72066Z" fill="currentColor" /></svg>
+                                        </button>
+                                    </div>
+                                    {isUploading &&
+                                        <div className="relative w-full mt-3 rounded-lg bg-[#E2E5EF]">
+                                            <Progress value={progress} className="rounded-lg bg-teal-500" size="xs" />
+                                        </div>
+                                    }
+                                </div>
+                                
+                                <DisplayPDF cid={cid}/>
+                            </div>
+                        ) : (
                             <div className="mb-5">
                                 <label
                                     htmlFor="message"
@@ -189,41 +269,22 @@ export default function SubmitArticle() {
                                             <p className="text-xs text-gray-500 dark:text-gray-400">pdf &#40;max. 2mb&#41;</p>
                                         </div>
                                         <input
+                                            ref={fileInputRef}
                                             onChange={saveToIpfs}
                                             accept={'.pdf'}
                                             id="dropzone-file" 
                                             type="file" 
                                             className="hidden"
+                                            value=""
                                         />
                                     </label>
                                 </div> 
                             </div>
-                        }
-                        
-                        {file &&
-                            <div>
-                                <div className="rounded-md bg-gray-200 py-4 px-8">
-                                    <div className="flex items-center justify-between">
-                                        <span className="truncate pr-3 text-base font-medium text-gray-900">
-                                            {file.name}
-                                        </span>
-                                        <button id="close-btn" className="text-gray-900">
-                                            <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" clipRule="evenodd" d="M0.279337 0.279338C0.651787 -0.0931121 1.25565 -0.0931121 1.6281 0.279338L9.72066 8.3719C10.0931 8.74435 10.0931 9.34821 9.72066 9.72066C9.34821 10.0931 8.74435 10.0931 8.3719 9.72066L0.279337 1.6281C-0.0931125 1.25565 -0.0931125 0.651788 0.279337 0.279338Z" fill="currentColor"/><path fillRule="evenodd" clipRule="evenodd" d="M0.279337 9.72066C-0.0931125 9.34821 -0.0931125 8.74435 0.279337 8.3719L8.3719 0.279338C8.74435 -0.0931127 9.34821 -0.0931123 9.72066 0.279338C10.0931 0.651787 10.0931 1.25565 9.72066 1.6281L1.6281 9.72066C1.25565 10.0931 0.651787 10.0931 0.279337 9.72066Z" fill="currentColor" /></svg>
-                                        </button>
-                                    </div>
-                                    {isUploading &&
-                                        <div className="relative w-full mt-3 rounded-lg bg-[#E2E5EF]">
-                                            <Progress value={progress} className="rounded-lg bg-teal-500" size="xs" />
-                                        </div>
-                                    }
-                                </div>
-                            </div>
-                        }
+                        )}
 
-                        <DisplayPDF cid={cid}/>
-                        
                         <div className="flex w-full flex-row-reverse mt-5">
                             <button
+                                onClick={handleSubmit}
                                 type="submit"
                                 disabled={loading}
                                 className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-8 py-2.5 mx-2 text-center text-sm font-medium font-display"
@@ -242,7 +303,7 @@ export default function SubmitArticle() {
                                 )}
                             </button>
                             <Link 
-                                href="/user"
+                                href="/"
                                 type="button" 
                                 className="text-gray-600 bg-white border border-gray-300 focus:outline-none hover:bg-gray-200 focus:ring-2 focus:ring-gray-200 font-medium rounded-lg text-sm px-5 py-2.5 mx-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700">
                                 Cancel

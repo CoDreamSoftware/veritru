@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { logout } from '@/services/auth'
 import { useSession } from "next-auth/react"
 import { useRef, useState, useEffect } from 'react'
+import axios from 'axios'
 import {
     Button,
     Drawer,
@@ -101,8 +102,11 @@ export default function Sidebar() {
     // Always checks user session
     useEffect(() => {
         async function fetchSessionData() {
-            setSessionData(session.user)
-            console.log(session.user)
+            const res = await axios.get('/api/getSession')
+            if (res.data) {
+                setSessionData(res.data)
+            }
+            console.log(res.data)
         }
         fetchSessionData()
     },[])
