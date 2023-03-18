@@ -9,8 +9,8 @@ import { useToast, Progress } from '@chakra-ui/react'
 import DashboardLayout from '@/components/DashboardLayout'
 import DisplayPDF from '@/components/DisplayPDF'
 
-export default function AddArticle() {
-    const { data: session, status } = useSession()
+export default function NewArticle() {
+    const { data: status } = useSession()
     const router = useRouter()
 
     const fileInputRef = useRef(null)
