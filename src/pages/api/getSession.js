@@ -6,7 +6,7 @@ export default async (req, res) => {
     const session = await getServerSession(req, res, authOptions)
     if (session) {
         // Signed in
-        res.send({ email: session.user.email })
+        console.log('Session', JSON.stringify(session, null, 2))
     } else {
         // Not Signed in
         res.status(401)

@@ -1,7 +1,6 @@
 import { signIn, signOut } from 'next-auth/react'
 
 export const login = async (FormData) => {
-    console.log(FormData)
     const { email, password } = FormData
 
     const status = await signIn('credentials', {

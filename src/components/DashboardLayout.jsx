@@ -16,7 +16,7 @@ export default function DashboardLayout(props) {
                 <header>
                     <Sidebar />
                 </header>
-                <main className="w-full p-2">
+                <main className="w-full md:ml-64">
                     {props.children}
                 </main>
             </div>

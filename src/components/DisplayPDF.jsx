@@ -7,11 +7,13 @@ import { HiArrowLongLeft, HiArrowLongRight } from "react-icons/hi2";
 pdfjs.GlobalWorkerOptions.workerSrc = '/worker/pdf.worker.min.js'
 
 export default function DisplayPDF ({ cid }) {
+    const [loading, setLoading] = useState(false)
     const [pdf, setPdf] = useState(null)
     const [numPages, setNumPages] = useState(null)
     const [pageNumber, setPageNumber] = useState(1)
 
     useEffect(() => {
+        setLoading(true)
         async function fetchPdf() {
             try {
                 const response = await axios.get(`https://dweb.link/ipfs/${cid}` , {
@@ -23,6 +25,7 @@ export default function DisplayPDF ({ cid }) {
             }
         }
         fetchPdf()
+        setLoading(false)
         console.log(pdf)
     }, [cid])
 
@@ -42,6 +45,8 @@ export default function DisplayPDF ({ cid }) {
     const nextPage = () => {
         changePage(1)
     }
+    
+    if (loading) return <p>Loading pdf preview. Please wait...</p>
 
     return (
         <Document 
@@ -57,6 +62,7 @@ export default function DisplayPDF ({ cid }) {
                 pageNumber={pageNumber} 
                 renderTextLayer={false} 
                 renderAnnotationLayer={false}
+                className="max-w-[635]"
             />
             <div className="w-full">
                 <p className="text-sm text-gray-400">Page {pageNumber || (numPages ? 1 : "--")} of {numPages || "--"}</p>
