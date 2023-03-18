@@ -3,7 +3,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { logout } from '@/services/auth'
-import { useSession } from "next-auth/react"
 import { useRef, useState, useEffect } from 'react'
 import axios from 'axios'
 import {
@@ -32,13 +31,12 @@ import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
 const navigation = [
-    { name: 'Dashboard', href: '/user', Icon: MdSpaceDashboard },
-    { name: 'Articles', href: '/user/articles', Icon: MdArticle },
-    { name: 'Add Article', href: '/user/add-article', Icon: MdNoteAdd },
+    { name: 'Dashboard', href: '/dashboard', Icon: MdSpaceDashboard },
+    { name: 'Fact-Check', href: '/dashboard/factcheck', Icon: MdArticle },
+    { name: 'Add Article', href: '/dashboard/factcheck/new', Icon: MdNoteAdd },
 ]
 
 export default function Sidebar() {
-    const { data: session, status } = useSession()
     const [sessionData, setSessionData] = useState([])
 
     const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure()
@@ -109,7 +107,7 @@ export default function Sidebar() {
             console.log(res.data)
         }
         fetchSessionData()
-    },[])
+    }, [])
 
     // Set Avatar
     const config = genConfig(sessionData.email)

@@ -1,7 +1,7 @@
 /* eslint-disable import/no-anonymous-default-export */
 import { hash } from 'bcryptjs'
-import dbConnect from '@/lib/dbConnect'
 import Joi from 'joi'
+import dbConnect from '@/lib/dbConnect'
 import User from '@/models/User'
 
 const schema = Joi.object({
@@ -35,22 +35,20 @@ export default async (req, res) => {
     })
 
     if (error) {
-        return res
-            .status(401)
-            .json({
-                success: false,
-                message: error.details[0].message.replace(/['"]+/g, ''),
-            })
+        return res.status(401).json({
+            success: false,
+            message: error.details[0].message.replace(/['"]+/g, ''),
+        })
     }
 
     try {
         const ifExist = await User.findOne({ email })
         if (ifExist) {
-            return res
-                .status(401)
-                .json({ success: false, message: 'User Already Exist' })
+            return res.status(401).json({ 
+                success: false,
+                message: 'User Already Exist'
+            })
         } else {
-
             const hashedPassword = await hash(password, 12)
             const createUser = await User.create({
                 username,
@@ -61,20 +59,16 @@ export default async (req, res) => {
                 role
             })
             
-            return res
-                .status(201)
-                .json({
-                    success: true,
-                    message: 'Account created successfully',
-                })
+            return res.status(201).json({
+                success: true,
+                message: 'Account created successfully',
+            })
         }
     } catch (error) {
         console.log('Error in register (server) => ', error)
-        return res
-            .status(500)
-            .json({
-                success: false,
-                message: 'Something Went Wrong Please Retry Later !',
-            })
+        return res.status(500).json({
+            success: false,
+            message: 'Something Went Wrong Please Retry Later !',
+        })
     }
 }

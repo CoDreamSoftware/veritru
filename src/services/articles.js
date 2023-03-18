@@ -1,7 +1,7 @@
 // POST method that adds a new entry in mongodb
 export const createArticle = async (FormData) => {
     try {
-        const res = await fetch('/api/articles/create', {
+        const res = await fetch('/api/articles', {
             headers: {
                 'Content-Type': 'application/json',
             },

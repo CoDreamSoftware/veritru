@@ -8,7 +8,7 @@ async function dbConnect() {
             useNewUrlParser: true,
             useUnifiedTopology: true,
         })
-        .then(() => console.log('Database connected!'))
+        .then(() => console.log('<<<<<<<  Database connected!  >>>>>>>'))
         .catch((err) =>
             console.log('Error connecting to db...' + err.message)
         )
