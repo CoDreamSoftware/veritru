@@ -1,61 +1,50 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
-export default function ArticlesTable({ article }) {
+import { HiDocumentMagnifyingGlass } from "react-icons/hi2";
+
+export default function ArticlesTable({ id, article }) {
     const router = useRouter()
 
     return (
-        <div className="relative overflow-x-auto shadow-lg shadow-gray-300/50 sm:rounded-lg">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
-                    <tr>
-                        <th scope="col" className="px-6 py-3">
-                            Headline
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            CID
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Category
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Description
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Status
-                        </th>
-                        <th scope="col" className="px-6 py-3">
-                            Action
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                        <Link href={`/${article._id}`}>
-                            <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                {article.headline}
-                            </th>
-                        </Link>
-                        <td className="px-6 py-4">
-                            {article.ipfs_cid}
-                        </td>
-                        <td className="px-6 py-4">
-                            {article.category}
-                        </td>
-                        <td className="px-6 py-4">
-                            {article.short_desc}
-                        </td>
-                        <td className="px-6 py-4">
-                            {article.result}
-                        </td>
-                        <td className="px-6 py-4">
-                            <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">
-                                Edit
-                            </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
+            <th scope="row" className="px-6 py-2 font-medium text-gray-900">
+                <div className="w-5">
+                    {id}
+                </div>
+            </th>
+            <td className="px-6 py-2 font-medium text-gray-900 dark:text-white">
+                <div className="w-[200px]">
+                    {article.headline}
+                </div>
+            </td>
+            <td className="px-6 py-2">
+                <div className="w-[200px]">
+                    {article.ipfs_cid}
+                </div>
+            </td>
+            <td className="px-6 py-2">
+                <div className="w-36">
+                    {article.category}
+                </div>
+            </td>
+            {/* <td className="px-6 py-4">
+                <div className="w-36">
+                    {article.short_desc}
+                </div>
+            </td> */}
+            <td className="px-6 py-2">
+                <div className="w-26">
+                    {article.result}
+                </div>
+            </td>
+            <td className="px-6 py-2">
+                <div className="w-10 p-2">
+                    <Link href={`/${article._id}`}>
+                        <HiDocumentMagnifyingGlass size="28" className="p-0 text-cyan-600 dark:text-cyan-200 "/>
+                    </Link>
+                </div>
+            </td>
+        </tr>
     )
 }
