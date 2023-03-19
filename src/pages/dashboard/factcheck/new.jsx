@@ -150,7 +150,7 @@ export default function NewArticle() {
     return (
         <DashboardLayout>
             <div className="h-full flex items-center justify-center px-5 pt-28 pb-5">
-            <div className="mx-auto w-full max-w-[635px] h-full">
+                <div className="mx-auto w-full max-w-[635px] h-full">
                     <h2 className="font-display font-semibold text-base text-center mb-4 mx-2 text-gray-900 dark:text-white">
                         Article Submission
                     </h2>

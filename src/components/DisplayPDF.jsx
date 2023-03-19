@@ -56,7 +56,7 @@ export default function DisplayPDF ({ cid }) {
             onLoadError={(error) => console.log(error)}
             onLoadSuccess={onDocumentLoadSuccess}
             loading={ <Spinner size='lg'/> }
-            className={pdf && "border-2 border-gray-400 rounded-md my-5 p-2"}
+            className={pdf && "border-2 border-gray-400 rounded-md my-5 p-2 w-auto"}
         >
             <Page
                 pageNumber={pageNumber} 

@@ -39,7 +39,7 @@ export default function ArticlesTable({ id, article }) {
             </td>
             <td className="px-6 py-2">
                 <div className="w-10 p-2">
-                    <Link href={`/${article._id}`}>
+                    <Link href={`/dashboard/factcheck/${article._id}`}>
                         <HiDocumentMagnifyingGlass size="28" className="p-0 text-cyan-600 dark:text-cyan-200 "/>
                     </Link>
                 </div>

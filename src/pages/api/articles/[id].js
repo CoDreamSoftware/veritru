@@ -2,20 +2,22 @@ import dbConnect from '@/lib/dbConnect'
 import Article from '@/models/Article'
 
 export default async function articlesHandler(req, res) {
+    await dbConnect()
+
     const {
         method,
         query: { id },
         body,
     } = req
 
-    await dbConnect()
+    
 
     switch (method) {
         case 'GET': /* Get a model by its ID */
             try {
                 const article = await Article.findById(id)
                 if (!article) return res.status(400).json({ success: false, message: "Article does not exists" })
-                return res.status(200).json({ success: true, data: article })
+                return res.status(200).json(article)
             } catch (error) {
                 return res.status(400).json({ success: false, message: error.message })
             }
@@ -27,7 +29,7 @@ export default async function articlesHandler(req, res) {
                     runValidators: true,
                 })
                 if (!article) return res.status(400).json({ success: false, message: "Article does not exists" })
-                return res.status(200).json({ success: true, data: article })
+                return res.status(200).json(article)
             } catch (error) {
                 return res.status(400).json({ success: false, message: error.message })
             }
