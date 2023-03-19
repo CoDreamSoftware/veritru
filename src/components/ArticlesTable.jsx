@@ -15,12 +15,16 @@ export default function ArticlesTable({ id, article }) {
             </th>
             <td className="px-6 py-2 font-medium text-gray-900 dark:text-white">
                 <div className="w-[200px]">
-                    {article.headline}
+                    <p className="line-clamp-2">
+                        {article.headline}
+                    </p>
                 </div>
             </td>
             <td className="px-6 py-2">
-                <div className="w-[200px]">
-                    {article.ipfs_cid}
+                <div className="w-[180px]">
+                    <p className="line-clamp-2">
+                        {article.ipfs_cid}
+                    </p>
                 </div>
             </td>
             <td className="px-6 py-2">
@@ -28,11 +32,6 @@ export default function ArticlesTable({ id, article }) {
                     {article.category}
                 </div>
             </td>
-            {/* <td className="px-6 py-4">
-                <div className="w-36">
-                    {article.short_desc}
-                </div>
-            </td> */}
             <td className="px-6 py-2">
                 <div className="w-26">
                     {article.result}
