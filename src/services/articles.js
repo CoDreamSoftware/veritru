@@ -20,6 +20,6 @@ export async function createArticle(FormData) {
 // GET method that fetches all entries from mongodb
 export async function getArticles() {
     const res = await fetch(`${assetPrefix}/api/articles/get`)
-    const data = res.json()
+    const data = await res.json()
     return data
 }

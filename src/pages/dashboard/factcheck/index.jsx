@@ -9,10 +9,6 @@ export default function FactCheck({ articles }) {
     const { data: status } = useSession()
     const router = useRouter()
 
-    if (articles) {
-        console.log(articles)
-    }
-
     // check user session
     if (status === "unauthenticated") {
         router.replace('/')
@@ -81,6 +77,6 @@ export default function FactCheck({ articles }) {
 
 // Pre-render props SSR
 export async function getServerSideProps() {
-    const res = await getArticles()
-    return {props: { articles: res }}
+    const articles = await getArticles()
+    return {props: { articles }}
 }
