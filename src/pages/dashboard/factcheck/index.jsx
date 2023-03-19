@@ -64,6 +64,7 @@ export default function FactCheck({ articles }) {
                                         </th>
                                     </tr>
                                 </thead>
+                                
                                 <tbody>
                                     {articles.map((article, idx) => (
                                         <ArticlesTable id={idx+1} article={article} key={article._id} />
@@ -71,8 +72,6 @@ export default function FactCheck({ articles }) {
                                 </tbody>
                             </table>
                         </div>
-
-                        
                     </div>
                 </div>
             </div>

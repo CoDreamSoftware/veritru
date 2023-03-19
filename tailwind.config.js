@@ -4,7 +4,9 @@ module.exports = {
         './src/**/*.{js,ts,jsx,tsx}', 
         './public/**/*.html',
     ],
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/line-clamp'),
+    ],
     darkMode: 'class',
     theme: {
         extend: {

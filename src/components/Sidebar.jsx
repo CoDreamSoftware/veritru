@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import { assetPrefix } from '@/next/next.config'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
@@ -305,3 +306,13 @@ export default function Sidebar() {
         </nav>
     )
 }
+
+// // REFACTOR useFetch that checks user session 
+// // to getServerSideProps
+
+// // Pre-render props SSR
+// export async function getServerSideProps() {
+//     const res = await fetch(`${assetPrefix}/api/getSession`)
+//     const data = res.json()
+//     return {props: { sessionData: data }}
+// }
