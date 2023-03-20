@@ -2,7 +2,7 @@ import Head from "next/head"
 import Navbar from "./Navbar"
 import Image from "next/image"
 
-export default function Layout(props) {
+export default function HeroLayout(props) {
     return (
         <>
             <Head>
@@ -17,7 +17,7 @@ export default function Layout(props) {
                 <Navbar />
             </header>
             <main>
-                <div className="h-full bg-gradient-to-br from-red-200 to-cyan-200">
+                <div className="h-[640px] bg-gradient-to-br from-red-200 to-cyan-200">
                     <div className="min-w-screen-xl px-2 md:px-3 mx-10 md:mx-20">
                         {props.children}
                     </div>

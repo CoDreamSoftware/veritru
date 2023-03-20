@@ -1,6 +1,6 @@
 import { signIn, signOut } from 'next-auth/react'
 
-export const login = async (FormData) => {
+export async function login(FormData) {
     const { email, password } = FormData
 
     const status = await signIn('credentials', {
@@ -11,7 +11,7 @@ export const login = async (FormData) => {
     return status
 }
 
-export const logout = async () => {
+export async function logout() {
     const status = await signOut({ 
         redirect: false, 
         callbackUrl: '/' 
@@ -19,7 +19,7 @@ export const logout = async () => {
     return status
 }
 
-export const register = async (FormData) => {
+export async function register(FormData) {
     try {
         const res = await fetch('/api/auth/register', {
             headers: {
