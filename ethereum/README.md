@@ -32,7 +32,20 @@ Ensure you are in a `ethereum` directory.
     CONTRACT_ADDRESS="Contract Address of your contract"
    ```
 
-4. Compile and migrate the smart contracts.
+4. If `3` is not working, replace the following with your PRIVATE_KEY and INFURA_API_KEY in `truffle-config.js`: (Don't forget to revert the changes back once you have finished migrating your contract) (DO NOT UPLOAD THIS WITH YOUR KEYS EXPOSED)
+   ```js
+    goerli: {
+    provider: () => new HDWalletProvider(
+        `YOUR_PRIVATE_KEY_HERE`, 
+        `https://goerli.infura.io/v3/YOUR_INFURA_API_KEY_HERE`, 
+        AccountIndex
+    ),
+    network_id: 5,
+    gas: 5500000,
+    },
+   ```
+
+5. Compile and migrate the smart contracts.
     ```javascript
     // create a json format for abi
     truffle compile
@@ -44,7 +57,7 @@ Ensure you are in a `ethereum` directory.
     // By default, it will look for a network named `development`
     ```
 
-5. Truffle can run tests written in JavaScript against your smart contracts which you find at the `ethereum/test/` directory. Note the command varies slightly if you're in or outside of the development console.
+6. Truffle can run tests written in JavaScript against your smart contracts which you find at the `ethereum/test/` directory. Note the command varies slightly if you're in or outside of the development console.
     ```javascript
     // inside the development console..
     truffle develop

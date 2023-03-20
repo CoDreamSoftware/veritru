@@ -1,227 +1,136 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity >= 0.8.0 < 0.9.0;
+pragma solidity ^0.8.0;
 
 contract Veritru {
-    struct Reviewer {
-        address reviewer_address;
-        string username;
-        uint tenure;
-        uint organization;
-        uint role;
-        uint frequency;
-        uint accuracy;
-    }
 
     struct Article {
-        address uploader;
         string ipfs_cid;
-        string headline;
-        string category;
-        string result;
+        bool exists;
+        mapping(address => bool) hasVoted;
+        mapping(address => bool) votes;
+        address[] voters;
     }
 
-    struct Vote {
-        address voter;
-        bool voted;
-        string ipfs_cid;
-        int vote;
-        int confidence;
-    }
-
-    mapping(address => Reviewer) public reviewers;
     mapping(string => Article) public articles;
-    mapping(address => Vote) public votes;
 
-    // // // // // // // // // // // //
-    // //      FOR REVIEWER      // //
-    // // // // // // // // // // //
-    address[] public reviewerMappingKeys;
+    // function submitArticle(string memory _ipfs_cid) public {
+    //     require(bytes(_ipfs_cid).length > 0, "IPFS CID cannot be empty");
+    //     require(!articles[_ipfs_cid].exists, "Article with this IPFS CID already exists");
 
-    function createReviewer(
-        address _reviewer_address,
-        string memory _username,
-        uint _tenure, 
-        uint _organization, 
-        uint _role
-    ) public {
-        Reviewer storage v = reviewers[_reviewer_address];
-        reviewerMappingKeys.push(_reviewer_address);
-        v.reviewer_address = _reviewer_address;
-        v.username = _username;
-        v.tenure = _tenure;
-        v.organization = _organization;
-        v.role = _role;
-    }
+    //     Article storage newArticle = articles[_ipfs_cid];
+    //     newArticle.ipfs_cid = _ipfs_cid;
+    //     newArticle.exists = true;
+    // }
 
-    function getReviewer(address _addr) public view returns (
-        address, string memory, uint, uint, uint
-    ) {
-        Reviewer memory v = reviewers[_addr];
-        return (
-            v.reviewer_address,
-            v.username,
-            v.tenure,
-            v.organization,
-            v.role
-        );
-    }
+    // // // // // // // // // // // // // //
+    // //   CAST VOTE OF THE REVIEWER  // //
+    // // // // // // // // // // // // //
+    function vote(string memory _ipfs_cid, bool _vote) public {
+        Article storage article = articles[_ipfs_cid];
 
-    function getAllReviewers() public view returns (Reviewer[] memory){
-        Reviewer[] memory result = new Reviewer[](reviewerMappingKeys.length);
-        for (uint i = 0; i < reviewerMappingKeys.length; i++) {
-            result[i] = reviewers[reviewerMappingKeys[i]];
+        // Check if the article exists, if not, create it
+        // After that, it proceeds with the vote
+        if (!article.exists) {
+            require(bytes(_ipfs_cid).length > 0, "IPFS CID cannot be empty");
+
+            article.ipfs_cid = _ipfs_cid;
+            article.exists = true;
         }
-        return result;
-    }
+        
+        // If article already exists, continue to vote
+        // Check if reviewer already voted
+        require(!article.hasVoted[msg.sender], "You have already voted for this article");
 
-    // // // // // // // // // // // //
-    // //      FOR ARTICLE      // //
-    // // // // // // // // // // //
-    string[] public articleMappingKeys;
-
-    function createArticle(
-        address _uploader,
-        string memory _ipfs_cid,
-        string memory _headline,
-        string memory _category
-    ) public {
-        Article storage v = articles[_ipfs_cid];
-        articleMappingKeys.push(_ipfs_cid);
-        v.uploader = _uploader;
-        v.ipfs_cid = _ipfs_cid;
-        v.headline = _headline;
-        v.category = _category;
-    }
-
-    function getArticle(string memory _ipfs_cid) public view returns (
-        address, string memory, string memory, string memory
-    ) {
-        Article memory v = articles[_ipfs_cid];
-        return (
-            v.uploader,
-            v.ipfs_cid,
-            v.headline,
-            v.category
-        );
-    }
-
-    function getAllArticles() public view returns (Article[] memory){
-        Article[] memory result = new Article[](articleMappingKeys.length);
-        for (uint i = 0; i < articleMappingKeys.length; i++) {
-            result[i] = articles[articleMappingKeys[i]];
-        }
-        return result;
-    }
-
-    // // // // // // // // // // // //
-    // //        FOR VOTE        // //
-    // // // // // // // // // // //
-    address[] public voteMappingKeys;
-    int public totalVotes;
-
-    function setVote(
-        address _voter,
-        string memory _ipfs_cid,
-        int _vote, 
-        int _confidence
-    ) public {
-        Vote storage v = votes[_voter];
-        voteMappingKeys.push(_voter);
-
-        v.voter = _voter;
-        v.voted = true;
-
-        v.ipfs_cid = _ipfs_cid;
-        v.vote = _vote;
-        v.confidence = _confidence;
-
-        totalVotes += _vote;
-        setFrequency(_voter, 1);
-    }
-
-    function getVote(address _addr) public view returns (
-        address, bool, string memory, int, int
-    ) {
-        Vote memory v = votes[_addr];
-        return (
-            v.voter,
-            v.voted,
-            v.ipfs_cid,
-            v.vote,
-            v.confidence
-        );
-    }
-
-    function getAllVotes() public view returns (Vote[] memory) {
-        Vote[] memory result = new Vote[](voteMappingKeys.length);
-        for (uint i = 0; i < voteMappingKeys.length; i++) {
-            result[i] = votes[voteMappingKeys[i]];
-        }
-        return result;
-    }
-
-    function getSumVotes() public view returns (int) {
-        return totalVotes;
+        article.votes[msg.sender] = _vote;
+        article.hasVoted[msg.sender] = true;
+        article.voters.push(msg.sender);
     }
 
     // // // // // // // // // // // // // //
-    // //      FREQUENCY OF VOTE       // //
+    // //   GET VOTE OF THE REVIEWER   // //
     // // // // // // // // // // // // //
-    function setFrequency(address _reviewer_address, uint _frequency) public {
-        Reviewer storage v = reviewers[_reviewer_address];
-        v.frequency += _frequency;
+    function getArticleVote(string memory _ipfs_cid, address _voter) public view returns (bool) {
+        Article storage article = articles[_ipfs_cid];
+        require(article.exists, "Article with this IPFS CID does not exist");
+
+        return article.votes[_voter];
     }
 
-    function getFrequency(address _addr) public view returns (uint) {
-        Reviewer memory v = reviewers[_addr];
-        return v.frequency;
-    }
-
-    // // // // // // // // // // // // // //
-    // //       ACCURACY OF VOTE       // //
     // // // // // // // // // // // // //
-    function setAccuracy(address _reviewer_address, uint _accuracy) public {
-        Reviewer storage v = reviewers[_reviewer_address];
-        v.accuracy += _accuracy;
+    // //    GET TOTAL TRUE VOTES   // //
+    // // // // // // // // // // // //
+    function getArticleTrueVotes(string memory _ipfs_cid) public view returns (uint) {
+        Article storage article = articles[_ipfs_cid];
+        require(article.exists, "Article with this IPFS CID does not exist");
+
+        uint trueVotes = 0;
+
+        for (uint i = 0; i < article.voters.length; i++) {
+            address voter = article.voters[i];
+            if (article.votes[voter]) {
+                trueVotes++;
+            }
+        }
+
+        return trueVotes;
     }
 
-    function getAccuracy(address _addr) public view returns (uint) {
-        Reviewer memory v = reviewers[_addr];
-        return v.accuracy;
-    }
-
-    // // // // // // // // // // // // // //
-    //  COMPUTE REVIEWER EXP = EXP SCORE  //
     // // // // // // // // // // // // //
-    function calcExpScore(address _addr) public view returns (uint) {
-        Reviewer memory v = reviewers[_addr];
-        return v.tenure + v.organization + v.role;
+    // //   GET TOTAL FALSE VOTES   // //
+    // // // // // // // // // // // //
+    function getArticleFalseVotes(string memory _ipfs_cid) public view returns (uint) {
+        Article storage article = articles[_ipfs_cid];
+        require(article.exists, "Article with this IPFS CID does not exist");
+
+        uint falseVotes = 0;
+        for (uint i = 0; i < article.voters.length; i++) {
+            address voter = article.voters[i];
+            if (!article.votes[voter]) {
+                falseVotes++;
+            }
+        }
+
+        return falseVotes;
     }
 
-    // // // // // // // // // // // // // // // // // // //
-    //  COMPUTE ACCURACY / FREQUENCY = REPUTATION SCORE  //
-    // // // // // // // // // // // // // // // // // //
-    function calcReputationScore(address _addr) public view returns (uint) {
-        Reviewer memory v = reviewers[_addr];
-        return (v.accuracy / v.frequency);
-    }
-
-    // // // // // // // // // // // 
-    // //       RESULT        // //
     // // // // // // // // // //
-    function setResult(
-        string memory _ipfs_cid, 
-        string memory _result
-    ) public {
-        Article storage v = articles[_ipfs_cid];
-        v.result = _result;
+    // //   TOTAL VOTES    // //
+    // // // // // // // // //
+    function getArticleTotalVotes(string memory _ipfs_cid) public view returns (uint) {
+        Article storage article = articles[_ipfs_cid];
+        require(article.exists, "Article with this IPFS CID does not exist");
+
+        return article.voters.length;
     }
 
-    function getResult(
-        string memory _ipfs_cid
-    ) public view returns (string memory) {
-        Article memory v = articles[_ipfs_cid];
-        return v.result;
+    // // // // // // // // // // // // // // // // // // // // // // //
+    // //   OUTCOME OF THE VOTES BASED ON MAJORITY VOTING MODEL   // //
+    // // // // // // // // // // // // // // // // // // // // // //
+    function getArticleOutcome(string memory _ipfs_cid) public view returns (string memory) {
+        Article storage article = articles[_ipfs_cid];
+        require(article.exists, "Article with this IPFS CID does not exist");
+
+        uint trueVotes = 0;
+        uint falseVotes = 0;
+        for (uint i = 0; i < article.voters.length; i++) {
+            address voter = article.voters[i];
+            if (article.votes[voter]) {
+                trueVotes++;
+            } else {
+                falseVotes++;
+            }
+        }
+
+        uint totalVotes = trueVotes + falseVotes;
+        uint threshold = totalVotes / 2;
+
+        if (trueVotes > threshold) {
+            return "True";
+        } else if (falseVotes > threshold) {
+            return "False";
+        } else {
+            return "Undetermined";
+        }
     }
 }
