@@ -6,12 +6,12 @@ export default function Home() {
 
     return (
         <HeroLayout>
-            <div class="container py-32">
-                <div class="flex flex-col max-w-[300px] md:py-16 mx-auto items-center">
-                    <h1 class="sm:text-3xl text-2xl mb-4 font-bold text-gray-900">
+            <div className="container py-32">
+                <div className="flex flex-col max-w-[300px] md:py-16 mx-auto items-center">
+                    <h1 className="sm:text-3xl text-2xl mb-4 font-bold text-gray-900">
                         VERIFY THE TRUTH
                     </h1>
-                    <p class="mb-8 leading-relaxed text-center">
+                    <p className="mb-8 leading-relaxed text-center">
                         A Web3 fact-Checking Application using Voting-Based Consensus Algorithm in 
                         blockchain technology to utilize its decentralization, security, and 
                         immutability of records and to combat the spread of fake news by creating 
