@@ -6,6 +6,11 @@ const nextConfig = {
     reactStrictMode: true,
     compiler: { removeConsole: isProd ? true : false },
     assetPrefix: isProd ? 'https://veritru.vercel.app' : 'http://localhost:3000',
+    images: {
+        dangerouslyAllowSVG: true,
+        contentDispositionType: 'attachment',
+        contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    },
     env: {
         INFURA_API_KEY: process.env.INFURA_API_KEY,
         INFURA_IPFS_ID: process.env.INFURA_IPFS_ID,

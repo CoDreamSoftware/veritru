@@ -17,7 +17,7 @@ export default function Navbar() {
 
     return (
         <>
-            <nav className="w-full fixed z-10 bg-white shadow-sm">
+            <nav className="w-full fixed z-10 bg-white bg-opacity-20 backdrop-blur-lg rounded drop-shadow-lg shadow-sm">
                 <div className="w-full">
                     <div className="flex items-center h-20 w-full">
                         <div className="flex items-center mx-10 md:mx-20 justify-between w-full">
@@ -106,7 +106,7 @@ export default function Navbar() {
                     leaveFrom="opacity-100 scale-100 translate-y-2"
                     leaveTo="opacity-0 scale-100 translate-y-0"
                 >
-                    <div className="md:hidden bg-white relative min-h-screen" id="mobile-menu">
+                    <div className="md:hidden transparent relative min-h-screen" id="mobile-menu">
                         <div
                             className="px-10 py-3 space-y-1"
                         >                            
