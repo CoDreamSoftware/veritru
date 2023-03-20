@@ -23,7 +23,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -65,7 +66,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -84,7 +86,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -103,7 +106,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -122,7 +126,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     },
     {
       "inputs": [
@@ -141,7 +146,8 @@
         }
       ],
       "stateMutability": "view",
-      "type": "function"
+      "type": "function",
+      "constant": true
     }
   ],
   "metadata": "{\"compiler\":{\"version\":\"0.8.19+commit.7dd6d404\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"name\":\"articles\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"ipfs_cid\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"exists\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipfs_cid\",\"type\":\"string\"}],\"name\":\"getArticleFalseVotes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipfs_cid\",\"type\":\"string\"}],\"name\":\"getArticleOutcome\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipfs_cid\",\"type\":\"string\"}],\"name\":\"getArticleTotalVotes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipfs_cid\",\"type\":\"string\"}],\"name\":\"getArticleTrueVotes\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipfs_cid\",\"type\":\"string\"},{\"internalType\":\"address\",\"name\":\"_voter\",\"type\":\"address\"}],\"name\":\"getArticleVote\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"_ipfs_cid\",\"type\":\"string\"},{\"internalType\":\"bool\",\"name\":\"_vote\",\"type\":\"bool\"}],\"name\":\"vote\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/Veritru.sol\":\"Veritru\"},\"evmVersion\":\"paris\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/Veritru.sol\":{\"keccak256\":\"0xf2420a7a0a33bf879f0b1792f545e026960269d842c317db87cde7676f838d98\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://7d0d1944aaa5894175006a77a5c0a1afc62f97b49527081b1dd5448a5e0b0e20\",\"dweb:/ipfs/QmP7oCxSZf4peKAjrUZoiYuhfnCoNn1LHLuQSVzqQsWXPx\"]}},\"version\":1}",
@@ -13578,12 +13584,13 @@
     "5777": {
       "events": {},
       "links": {},
-      "address": "0x560b8f7a7D9CcEB88b487F67F1cF398aFE2b6407",
-      "transactionHash": "0x4e83de34be0c9a0aa277aa87e874c2738c4931d6ac18f08c13b88510a1380653"
+      "address": "0x5ac179Ab209CC5b9FCF5342aE8512cA296bde30f",
+      "transactionHash": "0xc04d5af112d580b6038403934e069287e345afba30a83e4882bf918f4299fd6c"
     }
   },
   "schemaVersion": "3.4.12",
-  "updatedAt": "2023-03-20T07:49:36.583Z",
+  "updatedAt": "2023-03-20T08:04:08.346Z",
+  "networkType": "ethereum",
   "devdoc": {
     "kind": "dev",
     "methods": {},
