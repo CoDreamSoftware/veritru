@@ -17,11 +17,7 @@ export default function HeroLayout(props) {
                 <Navbar />
             </header>
             <main>
-                <div className="h-[640px] bg-gradient-to-br from-red-200 to-cyan-200">
-                    <div className="min-w-screen-xl px-2 md:px-3 mx-10 md:mx-20">
-                        {props.children}
-                    </div>
-                </div>
+                {props.children}
             </main>
         </>
     )
