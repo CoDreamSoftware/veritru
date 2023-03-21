@@ -32,7 +32,7 @@ import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
 const navigation = [
-    { name: 'Dashboard', href: '/dashboard', Icon: MdSpaceDashboard },
+    // { name: 'Dashboard', href: '/dashboard', Icon: MdSpaceDashboard },
     { name: 'Fact-Check', href: '/dashboard/factcheck', Icon: MdArticle },
     { name: 'Add Article', href: '/dashboard/factcheck/new', Icon: MdNoteAdd },
 ]

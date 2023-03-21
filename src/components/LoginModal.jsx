@@ -58,7 +58,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                 msg: res.message,
                 stats: 'success',
             })
-            router.push('/dashboard')
+            router.push('/dashboard/factcheck')
         }
         setLoading(false)
     }
