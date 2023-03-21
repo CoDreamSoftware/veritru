@@ -25,12 +25,13 @@ import {
     AlertDialogContent,
     AlertDialogOverlay,
     AlertDialogCloseButton,
-    Button,
     useDisclosure,
+    useToast,
 } from '@chakra-ui/react'
 
-import Veritru from '@/contracts/veritru'
-import web3 from '@/contracts/web3'
+import { useAccount } from 'wagmi'
+import { Veritru } from '@/contracts/veritru'
+import provider from '@/contracts/provider'
 
 const confidenceLvl = [
     { name: 'Select', value: 0 },
@@ -41,15 +42,26 @@ const confidenceLvl = [
 
 export default function FactCheck({ article, error }) {
     const { data: status } = useSession()
+    const { address, isConnected } = useAccount()
+
     const { query, push } = useRouter()
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = useRef()
     
+    const [selectedVote, setSelectedVote] = useState(false)
     const [confidence, setConfidence] = useState(confidenceLvl[0])
     const [loading, setLoading] = useState(false)
 
-    if (article) {
-        console.log(article)
+    const toaster = useToast()
+    const toast = (value) => {
+        toaster({
+            title: value.title,
+            description: value.msg,
+            status: value.stats,
+            duration: 3000,
+            isClosable: true,
+            position: 'top',
+        })
     }
 
     // check user session
@@ -58,35 +70,46 @@ export default function FactCheck({ article, error }) {
     }
     // otherwise, continue rendering props below
 
-    // Throw error if id is broken
+
+    // Throw error if article id is broken
     if (error && error.statusCode)
     return <Error statusCode={error.statusCode} title={error.statusText} />
 
-    // Execute castVote to blockchain
-    async function onSubmit(event) {
-        event.preventDefault()
 
+    // Execute to interact with smart contract
+    async function handleSubmitVote(event) {
+        console.log(selectedVote)
         setLoading(true)
-        // const accounts = await web3.eth.getAccounts()
-        // const createArticle = Veritru.methods
-        //     .createArticle(address, cid, headline, category)
-        //     .send({ from: accounts[0] })
 
-        // try {
-        //     await createArticle
-        //     console.log(createArticle)
-        //     toast({
-        //         title: 'Successfully submitted article', 
-        //         stats: 'success'
-        //     })
-        //     resetForm()
-        // } catch (error) {
-        //     toast({
-        //         title: 'Error submitting article', 
-        //         msg: error.message, 
-        //         stats: 'error'
-        //     })
-        // }
+        if (isConnected) {
+            const signer = provider.getSigner()
+            const veritru = await Veritru(signer)
+
+            try {
+                const signedTx = await veritru.vote(
+                    article.ipfs_cid,
+                    selectedVote
+                )
+                console.log("Status: ", signedTx)
+                toast({
+                    title: 'Voted Successfully',
+                    stats: 'success'
+                })
+            } catch (error) {
+                toast({
+                    title: 'Error!', 
+                    msg: `${error.message.substring(0,25) + "..."}`, 
+                    stats: 'error'
+                })
+            }
+        } else {
+            toast({
+                title: 'Error!', 
+                msg: 'Wallet not connected!', 
+                stats: 'error'
+            })
+        }
+
         setLoading(false)
     }
 
@@ -195,8 +218,11 @@ export default function FactCheck({ article, error }) {
                                 <div className="pl-10 pr-5 md:px-10 py-2">
                                     <div className="w-full">
                                         <button
-                                            onClick={onOpen}
-                                            type="submit"
+                                            onClick={() => {
+                                                setSelectedVote(true)
+                                                onOpen()
+                                            }}
+                                            type="button"
                                             disabled={loading}
                                             className={`text-white bg-emerald-500 hover:bg-emerald-400 rounded-lg px-7 py-2.5 mr-5 mb-2 text-center text-sm font-medium font-display`}
                                         >
@@ -208,7 +234,7 @@ export default function FactCheck({ article, error }) {
                                             ) : (
                                                 <div className="text-center">
                                                     <div role="status">
-                                                        <svg aria-hidden="true" className="inline w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <svg aria-hidden="true" className="inline w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
                                                             <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
                                                         </svg>
@@ -217,8 +243,11 @@ export default function FactCheck({ article, error }) {
                                             )}
                                         </button>
                                         <button
-                                            onClick={onOpen}
-                                            type="submit"
+                                            onClick={() => {
+                                                setSelectedVote(false)
+                                                onOpen()
+                                            }}
+                                            type="button"
                                             disabled={loading}
                                             className="text-white bg-red-500 hover:bg-red-400 rounded-lg px-6 py-2.5 mr-5 text-center text-sm font-medium font-display"
                                         >
@@ -230,7 +259,7 @@ export default function FactCheck({ article, error }) {
                                             ) : (
                                                 <div className="text-center">
                                                     <div role="status">
-                                                        <svg aria-hidden="true" className="inline w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                        <svg aria-hidden="true" className="inline w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-gray-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                             <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
                                                             <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
                                                         </svg>
@@ -366,7 +395,7 @@ export default function FactCheck({ article, error }) {
                         </div>
                     </div>
 
-                    <div className="w-full xl:w-[40%] mx-auto">
+                    <div className="w-full xl:w-[28rem] mx-auto">
                         <DisplayPDF cid={article.ipfs_cid}/>
                     </div>
 
@@ -392,13 +421,16 @@ export default function FactCheck({ article, error }) {
                             <AlertDialogFooter>
                                 <div className="flex w-full flex-row-reverse mt-5">
                                     <button
-                                        // onClick={handleSubmit}
-                                        type="submit"
+                                        onClick={()=> {
+                                            handleSubmitVote()
+                                            onClose()
+                                        }}
+                                        type="button"
                                         disabled={loading}
                                         className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-8 py-2.5 mx-2 text-center text-sm font-medium font-display"
                                     >
                                         { !loading ? (
-                                            <p>Submit</p>
+                                            <p>Confirm</p>
                                         ) : (
                                             <div className="text-center">
                                                 <div role="status">

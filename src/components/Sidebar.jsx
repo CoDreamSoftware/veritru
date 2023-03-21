@@ -92,7 +92,7 @@ export default function Sidebar() {
 
     // Persist wallet connection
     useEffect(() => {
-        const connectWalletOnPageLoad = async () => {
+        async function connectWalletOnPageLoad() {
             if (localStorage.getItem('isWalletConnected') === 'true') {
                 await connect()
             }
