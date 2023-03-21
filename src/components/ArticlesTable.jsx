@@ -15,9 +15,11 @@ export default function ArticlesTable({ id, article }) {
             </th>
             <td className="px-6 py-2 font-medium text-gray-900 dark:text-white">
                 <div className="w-[200px]">
-                    <p className="line-clamp-2">
+                    <Link href={`/dashboard/factcheck/${article._id}`} 
+                        className="line-clamp-2 hover:text-cyan-500"
+                    >
                         {article.headline}
-                    </p>
+                    </Link>
                 </div>
             </td>
             <td className="px-6 py-2">
@@ -40,7 +42,7 @@ export default function ArticlesTable({ id, article }) {
             <td className="px-6 py-2">
                 <div className="w-10 p-2">
                     <Link href={`/dashboard/factcheck/${article._id}`}>
-                        <HiDocumentMagnifyingGlass size="28" className="p-0 text-cyan-600 dark:text-cyan-200 "/>
+                        <HiDocumentMagnifyingGlass size="28" className="p-0 text-cyan-600 hover:text-cyan-700 dark:text-cyan-200 "/>
                     </Link>
                 </div>
             </td>
