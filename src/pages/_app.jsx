@@ -1,4 +1,5 @@
 import '@/styles/globals.css'
+import '@fontsource/poppins'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 
 import { SessionProvider } from 'next-auth/react'
