@@ -103,7 +103,7 @@ export default function Sidebar() {
     // Always checks user session
     useEffect(() => {
         async function fetchSessionData() {
-            const res = await axios.get('/api/getSession')
+            const res = await axios.get(`${assetPrefix}/api/getSession`)
             if (res.data) {
                 setSessionData(res.data)
             }
@@ -114,7 +114,7 @@ export default function Sidebar() {
 
     // Set Avatar
     const config = genConfig(sessionData.email)
-    
+
     return (
         <nav>
             <div className="fixed top-0 z-50 w-full py-2 px-5 bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700 hidden md:block">
@@ -330,13 +330,3 @@ export default function Sidebar() {
         </nav>
     )
 }
-
-// // REFACTOR useFetch that checks user session 
-// // to getServerSideProps
-
-// // Pre-render props SSR
-// export async function getServerSideProps() {
-//     const res = await fetch(`${assetPrefix}/api/getSession`)
-//     const data = res.json()
-//     return {props: { sessionData: data }}
-// }

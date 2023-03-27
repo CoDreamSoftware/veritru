@@ -31,7 +31,7 @@ import {
 
 import { useAccount } from 'wagmi'
 import { Veritru } from '@/contracts/veritru'
-import provider from '@/contracts/provider'
+import { useWallet } from '@/contracts/WalletProvider'
 
 const confidenceLvl = [
     { name: 'Select', value: 0 },
@@ -42,6 +42,7 @@ const confidenceLvl = [
 
 export default function FactCheck({ article, error }) {
     const { data: status } = useSession()
+    const { provider } = useWallet()
     const { address, isConnected } = useAccount()
 
     const { query, push } = useRouter()
@@ -77,7 +78,7 @@ export default function FactCheck({ article, error }) {
 
 
     // Execute to interact with smart contract
-    async function handleSubmitVote(event) {
+    async function handleSubmitVote() {
         console.log(selectedVote)
         setLoading(true)
 
