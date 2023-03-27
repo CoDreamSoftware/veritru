@@ -12,10 +12,8 @@ import {
 import { truncateAddress } from '@/utilities/address.utils'
 import { useConnect } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-import { useWallet } from '@/contracts/WalletProvider'
 
 export default function ConnectWallet({ isOpen, closeModal}) {
-    const { provider, connectWallet } = useWallet()
 
     const { connect } = useConnect({
         connector: new MetaMaskConnector(),
@@ -75,7 +73,6 @@ export default function ConnectWallet({ isOpen, closeModal}) {
                                     <button 
                                         onClick={()=>{
                                             connect()
-                                            connectWallet()
                                             closeModal()
                                         }}
                                         className="flex items-center w-full p-3 text-base font-bold text-gray-900 rounded-lg bg-gray-50 hover:bg-gray-100 group hover:shadow dark:bg-gray-600 dark:hover:bg-gray-500 dark:text-white">
