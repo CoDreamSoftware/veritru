@@ -138,8 +138,6 @@ export default function LoginModal({ isOpen, closeModal }) {
                                 </div>
                             </form>
                         </div>
-
-                        <hr className="my-5" />
                     </ModalBody>
 
                     <ModalFooter>
