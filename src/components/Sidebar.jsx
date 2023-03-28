@@ -94,6 +94,9 @@ export default function Sidebar() {
     // Persist wallet connection
     useEffect(() => {
         async function connectWalletOnPageLoad() {
+            localStorage.setItem('isWalletConnected', false)
+            localStorage.setItem('userConnectedWallet', false)
+            
             if (localStorage.getItem('userConnectedWallet') === 'true') {
                 if (localStorage.getItem('isWalletConnected') === 'true') {
                     await connect()
@@ -332,4 +335,11 @@ export default function Sidebar() {
             <ConnectWallet isOpen={isModalOpen} closeModal={onModalClose} />
         </nav>
     )
+}
+
+export async function getServerSideProps() {
+    if (typeof window !== 'undefined') {
+        localStorage.setItem('userConnectedWallet', false)
+    }
+    return { props: {} }
 }
