@@ -68,6 +68,7 @@ export default function Sidebar() {
     const { disconnect } = useDisconnect({
         onSettled(data, error) {
             console.log('Disconnect Settled', {data, error})
+            localStorage.setItem('userConnectedWallet', false)
             localStorage.setItem('isWalletConnected', false)
         }
     })
@@ -90,15 +91,17 @@ export default function Sidebar() {
         }
     }
 
-    // // Persist wallet connection
-    // useEffect(() => {
-    //     async function connectWalletOnPageLoad() {
-    //         if (localStorage.getItem('isWalletConnected') !== 'false') {
-    //             await connect()
-    //         }
-    //     }
-    //     connectWalletOnPageLoad()
-    // }, [])
+    // Persist wallet connection
+    useEffect(() => {
+        async function connectWalletOnPageLoad() {
+            if (localStorage.getItem('userConnectedWallet') === 'true') {
+                if (localStorage.getItem('isWalletConnected') === 'true') {
+                    await connect()
+                }
+            }
+        }
+        connectWalletOnPageLoad()
+    }, [])
 
     // Always checks user session
     useEffect(() => {

@@ -25,6 +25,7 @@ export default function ConnectWallet({ isOpen, closeModal}) {
                 stats: 'success'
             })
             localStorage.setItem('isWalletConnected', true)
+            localStorage.setItem('userConnectedWallet', true)
         },
         onError(error) {
             toast({
