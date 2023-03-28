@@ -90,15 +90,15 @@ export default function Sidebar() {
         }
     }
 
-    // Persist wallet connection
-    useEffect(() => {
-        async function connectWalletOnPageLoad() {
-            if (localStorage.getItem('isWalletConnected') === 'true') {
-                await connect()
-            }
-        }
-        connectWalletOnPageLoad()
-    }, [])
+    // // Persist wallet connection
+    // useEffect(() => {
+    //     async function connectWalletOnPageLoad() {
+    //         if (localStorage.getItem('isWalletConnected') !== 'false') {
+    //             await connect()
+    //         }
+    //     }
+    //     connectWalletOnPageLoad()
+    // }, [])
 
     // Always checks user session
     useEffect(() => {
