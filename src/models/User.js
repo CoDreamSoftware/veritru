@@ -7,13 +7,13 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String,
-        required: true, 
-        unique: true
+        required: true,
+        unique: true,
     },
     password: {
         type: String,
         required: true,
-        minLength: 5,
+        minLength: 8,
     },
     tenure: {
         type: String,
@@ -27,11 +27,19 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: 'Independent',
     },
+    isAdmin:{
+        type: Boolean,
+        default: false,
+    },
+    isApproved: {
+        type: Boolean,
+        default: false,
+    },
     createdAt: {
         type: Date,
-        default: Date.now
-    }
-},{timestamps: true})
+        default: Date.now,
+    },
+})
 
 const User = mongoose.models.User || mongoose.model('User', userSchema)
 

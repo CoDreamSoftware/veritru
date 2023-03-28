@@ -56,7 +56,8 @@ export default async (req, res) => {
                 password: hashedPassword,
                 tenure,
                 organization,
-                role
+                role,
+                isApproved: false,
             })
             
             return res.status(201).json({

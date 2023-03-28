@@ -5,34 +5,50 @@ import User from '@/models/User'
 import { compare } from 'bcryptjs'
 
 export default NextAuth({
-    //Configure JWT
     session: {
         jwt: true,
     },
-
     providers: [
         CredentialsProvider({
             name: 'credentials',
             credentials: {},
-            async authorize(credentials, req) {
+            async authorize(credentials) {
                 await dbConnect()
                 const { email, password } = credentials
                 // Add logic here to look up the user from the credentials supplied
                 const user = await User.findOne({ email })
                 console.log(user)
+                
                 if (!user) {
-                    throw new Error('No user found with the email')
+                    throw new Error('Invalid email address.')
+                }
+
+                if (!user.isApproved) {
+                    throw new Error('Invalid email address.')
                 }
 
                 const checkPassword = await compare(password, user.password)
                 console.log(checkPassword)
                 if (!checkPassword) {
-                    throw new Error('Password doesnt match')
+                    throw new Error('Password doesnt match.')
                 }
-                return user
+
+                return { id: user._id, email: user.email, isApproved: user.isApproved, isAdmin: user.isAdmin }
             },
         }),
     ],
+    callbacks: {
+        async jwt({ token, user }) {
+            if (user?._id) token._id = user._id
+            if (user?.isAdmin) token.isAdmin = user.isAdmin
+            return token
+        },
+        async session({ session, token }) {
+            if (token?._id) session.user._id = token._id
+            if (token?.isAdmin) session.user.isAdmin = token.isAdmin
+            return session
+        }
+    },
     secret: process.env.NEXTAUTH_SECRET,
     jwt: {
         secret: process.env.NEXTAUTH_SECRET,

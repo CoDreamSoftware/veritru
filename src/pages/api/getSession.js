@@ -7,7 +7,7 @@ export default async (req, res) => {
     if (session) {
         // Signed in
         console.log('Session', JSON.stringify(session, null, 2))
-        res.send({ email: session.user.email })
+        res.send(session)
     } else {
         // Not Signed in
         res.status(401)
