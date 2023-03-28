@@ -13,17 +13,15 @@ function WalletProvider({ children }) {
 
     async function connectWallet() {
         try {
-            if (isConnected) {
-                // if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
-                //     // We are in the browser and metamask is running
-                //     const web3Provider = await new ethers.providers.Web3Provider(window.ethereum)
-                //     setProvider(web3Provider)
-                // } else {
-                //     // Fallback to using Infura provider
-                //     // We are on the server *OR* the user is not running metamask
-                //     const infuraProvider = await new ethers.providers.InfuraProvider('goerli', API_KEY)
-                //     setProvider(infuraProvider)
-                // }
+            if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
+                // We are in the browser and metamask is running
+                const web3Provider = await new ethers.providers.Web3Provider(window.ethereum)
+                setProvider(web3Provider)
+            } else {
+                // Fallback to using Infura provider
+                // We are on the server *OR* the user is not running metamask
+                const infuraProvider = await new ethers.providers.InfuraProvider('goerli', API_KEY)
+                setProvider(infuraProvider)
             }
         } catch (error) {
             console.log(error)
