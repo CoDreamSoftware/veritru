@@ -2,9 +2,7 @@ import '@/styles/globals.css'
 import '@fontsource/poppins'
 import { ChakraProvider, extendTheme } from '@chakra-ui/react'
 
-import { WalletProvider } from '@/contracts/WalletProvider'
 import { SessionProvider } from 'next-auth/react'
-
 import { WagmiConfig, createClient, configureChains } from 'wagmi'
 import { goerli, sepolia } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
@@ -35,11 +33,9 @@ export default function App({ Component, pageProps: { session, ...pageProps } })
     return (
         <SessionProvider session={session}>
             <WagmiConfig client={client}>
-                <WalletProvider>
-                    <ChakraProvider theme={theme}>
-                        <Component {...pageProps} />
-                    </ChakraProvider>
-                </WalletProvider>
+                <ChakraProvider theme={theme}>
+                    <Component {...pageProps} />
+                </ChakraProvider>
             </WagmiConfig>
         </SessionProvider>
     )

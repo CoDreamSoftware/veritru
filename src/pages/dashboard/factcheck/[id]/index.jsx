@@ -31,7 +31,7 @@ import {
 
 import { useAccount } from 'wagmi'
 import { Veritru } from '@/contracts/veritru'
-import { useWallet } from '@/contracts/WalletProvider'
+import provider from '@/contracts/provider'
 
 const confidenceLvl = [
     { name: 'Select', value: 0 },
@@ -42,7 +42,6 @@ const confidenceLvl = [
 
 export default function FactCheck({ article, error }) {
     const { data: status } = useSession()
-    const { provider } = useWallet()
     const { address, isConnected } = useAccount()
 
     const { query, push } = useRouter()
