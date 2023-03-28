@@ -1,11 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
-import { assetPrefix } from '@/next/next.config'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import { useSession, getSession } from 'next-auth/react'
 import { logout } from '@/services/auth'
-import { useRef, useState, useEffect } from 'react'
-import axios from 'axios'
+import { useRef, useEffect } from 'react'
+
+import ConnectWallet from './ConnectWallet'
+import { truncateAddress } from '@/utilities/address.utils'
+import { useAccount, useConnect, useDisconnect } from 'wagmi'
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
+
 import {
     Button,
     Drawer,
@@ -26,25 +31,22 @@ import { IoSettingsSharp, IoWallet } from 'react-icons/io5'
 import { MdSpaceDashboard, MdArticle, MdNoteAdd } from 'react-icons/md'
 import Avatar, { genConfig } from 'react-nice-avatar'
 
-import ConnectWallet from './ConnectWallet'
-import { truncateAddress } from '@/utilities/address.utils'
-import { useAccount, useConnect, useDisconnect } from 'wagmi'
-import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
-
 const navigation = [
-    // { name: 'Dashboard', href: '/dashboard', Icon: MdSpaceDashboard },
+    { name: 'Dashboard', href: '/dashboard', Icon: MdSpaceDashboard },
     { name: 'Fact-Check', href: '/dashboard/factcheck', Icon: MdArticle },
     { name: 'Add Article', href: '/dashboard/factcheck/new', Icon: MdNoteAdd },
 ]
 
-export default function Sidebar() {
-    const [sessionData, setSessionData] = useState([])
+export default function Sidebar({ serverSession }) {
+    const router = useRouter()
+
+    const { data: clientSession } = useSession()
+    const session = clientSession || serverSession
+    const { address, isConnected } = useAccount()
 
     const { isOpen: isModalOpen, onOpen: onModalOpen, onClose: onModalClose } = useDisclosure()
     const { isOpen: isNavOpen, onOpen: onNavOpen, onClose: onNavClose } = useDisclosure()
     const navRef = useRef()
-    const router = useRouter()
-    const { address, isConnected } = useAccount()
 
     const toaster = useToast()
     const toast = (value) => {
@@ -106,20 +108,8 @@ export default function Sidebar() {
         connectWalletOnPageLoad()
     }, [])
 
-    // Always checks user session
-    useEffect(() => {
-        async function fetchSessionData() {
-            const res = await axios.get(`${assetPrefix}/api/getSession`)
-            if (res.data) {
-                setSessionData(res.data)
-            }
-            console.log(res.data)
-        }
-        fetchSessionData()
-    }, [])
-
     // Set Avatar
-    const config = genConfig(sessionData.email)
+    const config = genConfig(session?.user?.email)
 
     return (
         <nav>
@@ -192,6 +182,20 @@ export default function Sidebar() {
                                 </li>
                             )
                         })}
+
+                        {session?.user?.isAdmin && (
+                            <li>
+                                <Link
+                                    href="/dashboard/users-list"
+                                    className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
+                                >
+                                    <MdNoteAdd className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
+                                    <span className="ml-3">
+                                        Users
+                                    </span>
+                                </Link>
+                            </li>
+                        )}
                     </ul>
                     
                     <div className="fixed bottom-10 space-y-1">
@@ -199,7 +203,7 @@ export default function Sidebar() {
                             <Avatar className="w-12 h-12 rounded-full" {...config}/>
                             <div className="my-auto mx-2">
                                 <h5 className="text-[13px] truncate font-medium text-gray-900 dark:text-white">
-                                    {sessionData.email}
+                                    {session?.user?.email}
                                 </h5>
                                 <span className="text-[12px] text-gray-500 dark:text-gray-400">
                                     Account User
@@ -274,7 +278,7 @@ export default function Sidebar() {
                                     <Avatar className="w-12 h-12 rounded-full" {...config}/>
                                     <div className="my-auto mx-2">
                                         <h5 className="text-[13px] truncate font-medium text-gray-900 dark:text-white">
-                                            {sessionData.email}
+                                            {session?.user?.email}
                                         </h5>
                                         <span className="text-[12px] text-gray-500 dark:text-gray-400">
                                             Account User
@@ -337,9 +341,11 @@ export default function Sidebar() {
     )
 }
 
-export async function getServerSideProps() {
-    if (typeof window !== 'undefined') {
-        localStorage.setItem('userConnectedWallet', false)
+export async function getServerSideProps(context) {
+    const serverSession = await getSession(context)
+    return {
+        props: {
+            serverSession,
+        },
     }
-    return { props: {} }
 }

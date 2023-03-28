@@ -46,6 +46,7 @@ export default function LoginModal({ isOpen, closeModal }) {
 
         setLoading(true)
         const res = await login(formData)
+
         if (res.error) {
             toast({
                 title: 'Error!',
@@ -58,7 +59,7 @@ export default function LoginModal({ isOpen, closeModal }) {
                 msg: res.message,
                 stats: 'success',
             })
-            router.push('/dashboard/factcheck')
+            router.push('/dashboard')
         }
         setLoading(false)
     }
@@ -139,10 +140,6 @@ export default function LoginModal({ isOpen, closeModal }) {
                             </form>
                         </div>
                     </ModalBody>
-
-                    <ModalFooter>
-                        <Button onClick={closeModal}>Close</Button>
-                    </ModalFooter>
                 </ModalContent>
             </Modal>
         </>
