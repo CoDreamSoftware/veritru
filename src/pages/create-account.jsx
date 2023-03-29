@@ -5,6 +5,7 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel, useToast } from '@chakra-ui/re
 import { FiChevronDown, FiCheck } from 'react-icons/fi'
 import { Listbox, Transition } from '@headlessui/react'
 import Layout from '@/components/Layout'
+import CustomToast from '@/components/CustomToast'
 
 const yrsExp = [
     { name: '0-5 years', value: 1 },
@@ -25,15 +26,18 @@ const category = [
 ]
 
 export default function CreateAccount() {
-    const [username, setUsername] = useState('')
+    const [lastname, setLastname] = useState('')
+    const [firstname, setFirstname] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [yrs, setYrs] = useState(yrsExp[0])
     const [org, setOrg] = useState(organization[0])
     const [role, setRole] = useState(category[0])
 
-    const [error, setError] = useState({ email: '', password: '', username: '' })
+    const [error, setError] = useState({})
+    const [showErrors, setShowErrors] = useState(false)
 
+    const [isTabDisabled, setIsTabDisabled] = useState(true)
     const tabRef = useRef()
 
     function handleTab() {
@@ -52,23 +56,39 @@ export default function CreateAccount() {
         })
     }
 
-    async function handleSubmit(event) {
-        event.preventDefault()
+    function handleValidations() {
+        let errors = {}
+        let isValid = true
+        // Check validations
+        if (!lastname) {
+            errors.lastname = 'Last name is required'
+            isValid = false
+        }
+        if (!firstname) {
+            errors.firstname = 'First name is required'
+            isValid = false
+        }
         if (!email) {
-            setError({ ...error, email: "Email is required" })
-            return
+            errors.email = 'Email is required'
+            isValid = false
         }
         if (!password) {
-            setError({ ...error, password: "Password is required" })
-            return
+            errors.password = 'Password is required'
+            isValid = false
         }
-        if (!username) {
-            setError({ ...error, username: "Username is required" })
-            return
+        if (password.length < 8) {
+            errors.passwordLen = 'Password must be at least 8 characters'
+            isValid = false
         }
+        setIsTabDisabled(!isValid)
+        return errors
+    }
+
+    async function handleSubmit(event) {
+        event.preventDefault()
 
         const res = await register({
-            username: username,
+            name: `${firstname} ${lastname}`,
             email: email,
             password: password,
             tenure: yrs.name.toString(),
@@ -76,10 +96,17 @@ export default function CreateAccount() {
             role: role.name.toString(),
         })
         if (res.success) {
-            toast({
-                title: 'Success!',
-                msg: res.message,
-                stats: 'success',
+            toaster({
+                duration: 4000,
+                isClosable: true,
+                render: () => (
+                    <CustomToast
+                        title= 'Registration Submitted'
+                        description='Thanks for submitting your registration. Our team will get back to you soon. Always check your email.'
+                        status='success'
+                        centered
+                    />
+                )
             })
             resetForm()
         } else {
@@ -92,7 +119,8 @@ export default function CreateAccount() {
     }
 
     function resetForm () {
-        setUsername('')
+        setFirstname('')
+        setLastname('')
         setEmail('')
         setPassword('')
         setYrs(yrsExp[0])
@@ -101,8 +129,13 @@ export default function CreateAccount() {
     }
 
     useEffect(() => {
+        handleValidations();
+      }, [lastname, firstname, email, password])
+
+    useEffect(() => {
         console.log(yrs, org, role)
-    }, [yrs, org, role])
+        console.log(error)
+    }, [yrs, org, role, error])
 
     return (
         <Layout>
@@ -111,7 +144,7 @@ export default function CreateAccount() {
                     <Tabs variant='soft-rounded' colorScheme='cyan' isFitted>
                         <TabList>
                             <Tab>Account Info</Tab>
-                            <Tab ref={tabRef}>Personal Info</Tab>
+                            <Tab isDisabled={isTabDisabled} ref={tabRef}>Personal Info</Tab>
                         </TabList>
                         <form onSubmit={handleSubmit}>
                             <TabPanels>
@@ -126,18 +159,39 @@ export default function CreateAccount() {
                                                 htmlFor="name"
                                                 className="mx-2 my-2 block font-normal font-display text-base text-gray-900 dark:text-white tracking-wide"
                                             >
-                                                Username
+                                                Firstname
                                             </label>
                                             <input
-                                                value={username}
-                                                onChange={(e)=> setUsername(e.target.value)}
+                                                value={firstname}
+                                                onChange={(e)=> setFirstname(e.target.value)}
                                                 type="text"
-                                                name="username"
-                                                id="username"
-                                                placeholder="Your username"
+                                                name="firstname"
+                                                id="firstname"
+                                                placeholder="Your firstname"
                                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-800 focus:border-gray-800 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                                 required
                                             />
+                                            { !firstname && error.firstname && <p className="text-sm text-red-500">{error.firstname}</p> }
+                                        </div>
+
+                                        <div className="mb-5">
+                                            <label
+                                                htmlFor="name"
+                                                className="mx-2 my-2 block font-normal font-display text-base text-gray-900 dark:text-white tracking-wide"
+                                            >
+                                                Lastname
+                                            </label>
+                                            <input
+                                                value={lastname}
+                                                onChange={(e)=> setLastname(e.target.value)}
+                                                type="text"
+                                                name="lastname"
+                                                id="lastname"
+                                                placeholder="Your lastname"
+                                                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-800 focus:border-gray-800 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
+                                                required
+                                            />
+                                            { !lastname && error.lastname && <p className="text-sm text-red-500">{error.lastname}</p> }
                                         </div>
 
                                         <div className="mb-5">
@@ -157,6 +211,7 @@ export default function CreateAccount() {
                                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-800 focus:border-gray-800 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                                 required
                                             />
+                                            { !email && error.email && <p className="text-sm text-red-500">{error.email}</p> }
                                         </div>
 
                                         <div className="mb-5">
@@ -176,9 +231,23 @@ export default function CreateAccount() {
                                                 className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-800 focus:border-gray-800 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
                                                 required
                                             />
+                                            { !password && error.password && <p className="text-sm text-red-500">{error.password}</p> }
+                                            { !password && error.passwordLen && <p className="text-sm text-red-500">{error.passwordLen}</p> }
                                         </div>
                                         
-                                        <button onClick={handleTab} type="button" className="w-full my-5 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display">
+                                        <button 
+                                            onClick={() => {
+                                                const errors = handleValidations()
+                                                setError(errors)
+                                                if (errors) {
+                                                    setShowErrors(true)
+                                                }
+                                                if (!isTabDisabled) {
+                                                    handleTab()
+                                                }
+                                            }} 
+                                            type="button" 
+                                            className="w-full my-5 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display">
                                             Continue
                                         </button>
 

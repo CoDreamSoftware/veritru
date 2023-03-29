@@ -28,7 +28,7 @@ import {
 } from '@chakra-ui/react'
 import { HiBars3BottomLeft } from 'react-icons/hi2'
 import { IoSettingsSharp, IoWallet } from 'react-icons/io5'
-import { MdSpaceDashboard, MdArticle, MdNoteAdd } from 'react-icons/md'
+import { MdSpaceDashboard, MdArticle, MdNoteAdd, MdAccountCircle } from 'react-icons/md'
 import Avatar, { genConfig } from 'react-nice-avatar'
 
 const navigation = [
@@ -189,7 +189,7 @@ export default function Sidebar({ serverSession }) {
                                     href="/dashboard/users-list"
                                     className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
                                 >
-                                    <MdNoteAdd className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
+                                    <MdAccountCircle className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
                                     <span className="ml-3">
                                         Users
                                     </span>
@@ -271,6 +271,20 @@ export default function Sidebar({ serverSession }) {
                                         </li>
                                     )
                                 })}
+
+                                {session?.user?.isAdmin && (
+                                    <li>
+                                        <Link
+                                            href="/dashboard/users-list"
+                                            className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
+                                        >
+                                            <MdAccountCircle className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
+                                            <span className="ml-3">
+                                                Users
+                                            </span>
+                                        </Link>
+                                    </li>
+                                )}
                             </ul>
                             
                             <div className="fixed bottom-28 space-y-1">

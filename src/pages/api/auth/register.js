@@ -5,7 +5,7 @@ import dbConnect from '@/lib/dbConnect'
 import User from '@/models/User'
 
 const schema = Joi.object({
-    username: Joi.string().required(),
+    name: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(5).required(),
     tenure: Joi.string().required(),
@@ -17,7 +17,7 @@ export default async (req, res) => {
     await dbConnect()
 
     const { 
-        username,
+        name,
         email,
         password,
         tenure,
@@ -26,7 +26,7 @@ export default async (req, res) => {
     } = req.body
     
     const { error } = schema.validate({ 
-        username,
+        name,
         email,
         password,
         tenure,
@@ -51,7 +51,7 @@ export default async (req, res) => {
         } else {
             const hashedPassword = await hash(password, 12)
             const createUser = await User.create({
-                username,
+                name,
                 email,
                 password: hashedPassword,
                 tenure,
