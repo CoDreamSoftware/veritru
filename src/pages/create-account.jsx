@@ -139,7 +139,7 @@ export default function CreateAccount() {
 
     return (
         <Layout>
-            <div className="pt-32 flex items-center justify-center p-12">
+            <div className="h-screen pt-32 flex items-center justify-center p-12">
                 <div className="max-w-[700px] p-8 rounded-lg bg-gray-100 dark:bg-gray-50">
                     <Tabs variant='soft-rounded' colorScheme='cyan' isFitted>
                         <TabList>
