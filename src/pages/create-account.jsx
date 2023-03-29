@@ -146,7 +146,7 @@ export default function CreateAccount() {
                             <Tab>Account Info</Tab>
                             <Tab isDisabled={isTabDisabled} ref={tabRef}>Personal Info</Tab>
                         </TabList>
-                        <form onSubmit={handleSubmit}>
+                        <form>
                             <TabPanels>
                                 <TabPanel>
                                     <div className="mx-auto mt-5 w-full">
@@ -245,7 +245,7 @@ export default function CreateAccount() {
                                                 if (!isTabDisabled) {
                                                     handleTab()
                                                 }
-                                            }} 
+                                            }}
                                             type="button" 
                                             className="w-full my-5 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display">
                                             Continue
@@ -442,7 +442,7 @@ export default function CreateAccount() {
                                             </Listbox>
                                         </div>
                                         
-                                        <button type="submit" className="w-full my-5 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display">
+                                        <button onClick={handleSubmit} type="button" className="w-full my-5 text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-center text-sm font-medium font-display">
                                             Register Account
                                         </button>
                                         

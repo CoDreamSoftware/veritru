@@ -9,7 +9,7 @@ import {
     Button,
     useToast,
 } from '@chakra-ui/react'
-import { truncateAddress } from '@/utilities/address.utils'
+import { truncateAddress } from '@/utilities/tools.utils'
 import { useConnect } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 

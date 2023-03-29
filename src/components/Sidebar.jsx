@@ -7,7 +7,7 @@ import { logout } from '@/services/auth'
 import { useRef, useEffect } from 'react'
 
 import ConnectWallet from './ConnectWallet'
-import { truncateAddress } from '@/utilities/address.utils'
+import { truncateAddress } from '@/utilities/tools.utils'
 import { useAccount, useConnect, useDisconnect } from 'wagmi'
 import { MetaMaskConnector } from 'wagmi/connectors/metaMask'
 
@@ -203,7 +203,7 @@ export default function Sidebar({ serverSession }) {
                             <Avatar className="w-12 h-12 rounded-full" {...config}/>
                             <div className="my-auto mx-2">
                                 <h5 className="text-[13px] truncate font-medium text-gray-900 dark:text-white">
-                                    {session?.user?.email}
+                                    {session?.user?.email.substring(0,20) + "..."}
                                 </h5>
                                 <span className="text-[12px] text-gray-500 dark:text-gray-400">
                                     Account User
@@ -292,7 +292,7 @@ export default function Sidebar({ serverSession }) {
                                     <Avatar className="w-12 h-12 rounded-full" {...config}/>
                                     <div className="my-auto mx-2">
                                         <h5 className="text-[13px] truncate font-medium text-gray-900 dark:text-white">
-                                            {session?.user?.email}
+                                            {session?.user?.email.substring(0,20) + "..."}
                                         </h5>
                                         <span className="text-[12px] text-gray-500 dark:text-gray-400">
                                             Account User
