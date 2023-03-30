@@ -1,11 +1,8 @@
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 
-import { HiDocumentMagnifyingGlass } from "react-icons/hi2";
+import { HiDocumentMagnifyingGlass } from 'react-icons/hi2'
 
 export default function ArticlesTable({ id, article }) {
-    const router = useRouter()
-
     return (
         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             <th scope="row" className="px-6 py-2 font-medium text-gray-900">
