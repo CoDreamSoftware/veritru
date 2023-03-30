@@ -1,19 +1,10 @@
+import { getSession } from 'next-auth/react'
 import { getArticles } from '@/services/articles'
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
 
 import DashboardLayout from '@/components/DashboardLayout'
 import ArticlesTable from '@/components/ArticlesTable'
 
 export default function FactCheck({ articles }) {
-    const { data: status } = useSession()
-    const router = useRouter()
-
-    // check user session
-    if (status === "unauthenticated") {
-        router.replace('/')
-    }
-    // otherwise, continue rendering props below
 
     // If no articles yet, render initial view
     if (articles.length === 0) return (
@@ -76,7 +67,23 @@ export default function FactCheck({ articles }) {
 }
 
 // Pre-render props SSR
-export async function getServerSideProps() {
+export async function getServerSideProps(context) {
+    const session = await getSession(context)
     const articles = await getArticles()
-    return {props: { articles }}
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        }
+    }
+
+    return {
+        props: {
+            //session,
+            articles 
+        }
+    }
 }

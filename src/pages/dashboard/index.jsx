@@ -1,16 +1,7 @@
-import { useSession } from 'next-auth/react'
-import { useRouter } from 'next/router'
+import { getSession } from 'next-auth/react'
 import DashboardLayout from '@/components/DashboardLayout'
 
 export default function Dashboard() {
-    const { data: status } = useSession()
-    const router = useRouter()
-
-    // check user session
-    if (status === "unauthenticated") {
-        router.replace('/')
-    }
-    // otherwise, continue rendering props below
     return (
         <DashboardLayout>
             <div className="pt-32 pb-5 px-5 flex items-center justify-center">
@@ -24,4 +15,23 @@ export default function Dashboard() {
             </div>
         </DashboardLayout>
     )
+}
+
+export async function getServerSideProps(context) {
+    const session = await getSession(context)
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        }
+    }
+
+    return {
+        props: {
+            //session,
+        },
+    }
 }

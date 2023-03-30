@@ -1,6 +1,5 @@
 import Link from 'next/link'
-import { useSession } from "next-auth/react"
-import { useRouter } from 'next/router'
+import { getSession } from "next-auth/react"
 import { useState, useEffect, useRef } from 'react'
 import { create } from 'ipfs-http-client'
 import { createArticle } from '@/services/articles'
@@ -10,9 +9,6 @@ import DashboardLayout from '@/components/DashboardLayout'
 import DisplayPDF from '@/components/DisplayPDF'
 
 export default function NewArticle() {
-    const { data: status } = useSession()
-    const router = useRouter()
-
     const fileInputRef = useRef(null)
     const [file, setFile] = useState(null)
     const [cid, setCid] = useState('')
@@ -140,12 +136,6 @@ export default function NewArticle() {
     useEffect(() => {
         console.log(file, cid, headline, category, shortDesc)
     }, [file, cid, headline, category, shortDesc])
-
-    // check user session
-    if (status === "unauthenticated") {
-        router.replace('/')
-    }
-    // otherwise, continue rendering props below
 
     return (
         <DashboardLayout>
@@ -325,4 +315,23 @@ export default function NewArticle() {
             </div>
         </DashboardLayout>
     )
+}
+
+export async function getServerSideProps(context) {
+    const session = await getSession(context)
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        }
+    }
+
+    return {
+        props: {
+            //session,
+        },
+    }
 }
