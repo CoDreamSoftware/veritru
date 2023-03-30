@@ -2,7 +2,7 @@
 import { assetPrefix } from '@/next/next.config'
 import dbConnect from '@/lib/dbConnect'
 import User from '@/models/User'
-import { sendEmail } from '@/services/mailer'
+// import { sendEmail } from '@/services/mailer'
 
 export default async (req, res) => {
     await dbConnect()
@@ -27,7 +27,7 @@ export default async (req, res) => {
             return
         }
 
-        const url = `${assetPrefix}`
+        // const url = `${assetPrefix}`
 
         // // Send approval email
         // await sendEmail({
