@@ -186,7 +186,7 @@ export default function Sidebar({ serverSession }) {
                         {session?.user?.isAdmin && (
                             <li>
                                 <Link
-                                    href="/dashboard/users-list"
+                                    href="/dashboard/users"
                                     className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
                                 >
                                     <MdAccountCircle className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
@@ -203,7 +203,7 @@ export default function Sidebar({ serverSession }) {
                             <Avatar className="w-12 h-12 rounded-full" {...config}/>
                             <div className="my-auto mx-2">
                                 <h5 className="text-[13px] truncate font-medium text-gray-900 dark:text-white">
-                                    {session?.user?.email.substring(0,20) + "..."}
+                                    {session?.user?.email.substring(0,14) + "..."}
                                 </h5>
                                 <span className="text-[12px] text-gray-500 dark:text-gray-400">
                                     Account User
@@ -275,7 +275,7 @@ export default function Sidebar({ serverSession }) {
                                 {session?.user?.isAdmin && (
                                     <li>
                                         <Link
-                                            href="/dashboard/users-list"
+                                            href="/dashboard/users"
                                             className="flex items-center p-2 text-base font-medium text-gray-900 rounded-lg dark:text-white hover:bg-gray-300 dark:hover:bg-gray-700"
                                         >
                                             <MdAccountCircle className="w-6 h-6 text-gray-500 transition duration-75 dark:text-gray-50 group-hover:text-gray-100 dark:group-hover:text-white"/>
@@ -287,12 +287,12 @@ export default function Sidebar({ serverSession }) {
                                 )}
                             </ul>
                             
-                            <div className="fixed bottom-28 space-y-1">
+                            <div className="fixed bottom-28 space-y-1 px-6 py-4">
                                 <div className="flex">
                                     <Avatar className="w-12 h-12 rounded-full" {...config}/>
                                     <div className="my-auto mx-2">
                                         <h5 className="text-[13px] truncate font-medium text-gray-900 dark:text-white">
-                                            {session?.user?.email.substring(0,20) + "..."}
+                                            {session?.user?.email.substring(0,14) + "..."}
                                         </h5>
                                         <span className="text-[12px] text-gray-500 dark:text-gray-400">
                                             Account User

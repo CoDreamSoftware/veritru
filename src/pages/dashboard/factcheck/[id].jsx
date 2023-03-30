@@ -1,7 +1,6 @@
 import { assetPrefix } from '@/next/next.config'
-import { useSession } from "next-auth/react"
-import { useRouter } from 'next/router'
 import Error from "next/error"
+import { getSession } from 'next-auth/react'
 import { Fragment, useRef, useState, useEffect } from 'react'
 
 import DisplayPDF from '@/components/DisplayPDF'
@@ -41,10 +40,8 @@ const confidenceLvl = [
 ]
 
 export default function FactCheck({ article, error }) {
-    const { data: status } = useSession()
     const { address, isConnected } = useAccount()
 
-    const { query, push } = useRouter()
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = useRef()
     
@@ -63,13 +60,6 @@ export default function FactCheck({ article, error }) {
             position: 'top',
         })
     }
-
-    // check user session
-    if (status === "unauthenticated") {
-        router.replace('/')
-    }
-    // otherwise, continue rendering props below
-
 
     // Throw error if article id is broken
     if (error && error.statusCode)
@@ -109,7 +99,6 @@ export default function FactCheck({ article, error }) {
                 stats: 'error'
             })
         }
-
         setLoading(false)
     }
 
@@ -460,11 +449,22 @@ export default function FactCheck({ article, error }) {
 }
 
 // Pre-render props SSR
-export async function getServerSideProps({ query: { id } }) {
+export async function getServerSideProps({ query: { id }, context }) {
+    const session = await getSession(context)
+
     // GET method that fetches an entry from mongodb using ID
     const res = await fetch(`${assetPrefix}/api/articles/${id}`, {
         method: 'GET',
     })
+
+    if (!session) {
+        return {
+            redirect: {
+                destination: '/',
+                permanent: false,
+            },
+        }
+    }
     
     if (res.status === 200) {
         const article = await res.json()
@@ -473,7 +473,8 @@ export async function getServerSideProps({ query: { id } }) {
     }
 
     return {
-        props: { 
+        props: {
+            //session,
             error: {
                 statusCode: res.status,
                 statusText: "Invalid Id",
