@@ -40,7 +40,7 @@ const confidenceLvl = [
 ]
 
 // Custom use** Hook instead of using SWR - stale while revalidate
-function useTrueVotes(ipfs_cid, initTrueVotes, interval = 5000) {
+function useTrueVotes(ipfs_cid, initTrueVotes, interval = 4000) {
     const [trueVotes, setTrueVotes] = useState(initTrueVotes)
 
     useEffect(() => {
@@ -67,7 +67,7 @@ function useTrueVotes(ipfs_cid, initTrueVotes, interval = 5000) {
 }
 
 // Custom use** Hook instead of using SWR - stale while revalidate
-function useFalseVotes(ipfs_cid, initFalseVotes, interval = 5000) {
+function useFalseVotes(ipfs_cid, initFalseVotes, interval = 4000) {
     const [falseVotes, setFalseVotes] = useState(initFalseVotes)
 
     useEffect(() => {
@@ -94,7 +94,7 @@ function useFalseVotes(ipfs_cid, initFalseVotes, interval = 5000) {
 }
 
 // Custom use** Hook instead of using SWR - stale while revalidate
-function useTotalVotes(ipfs_cid, initTotalVotes, interval = 5000) {
+function useTotalVotes(ipfs_cid, initTotalVotes, interval = 4000) {
     const [totalVotes, setTotalVotes] = useState(initTotalVotes)
 
     useEffect(() => {
@@ -120,7 +120,7 @@ function useTotalVotes(ipfs_cid, initTotalVotes, interval = 5000) {
     return totalVotes
 }
 
-export default function FactCheck({ article, error, initTrueVotes, initFalseVotes, initTotalVotes }) {
+export default function FactCheck({ article, sessionError, initTrueVotes, initFalseVotes, initTotalVotes }) {
     const trueVotes = useTrueVotes(article.ipfs_cid, initTrueVotes)
     const falseVotes = useFalseVotes(article.ipfs_cid, initFalseVotes)
     const totalVotes = useTotalVotes(article.ipfs_cid, initTotalVotes)
@@ -134,6 +134,7 @@ export default function FactCheck({ article, error, initTrueVotes, initFalseVote
     const [selectedVote, setSelectedVote] = useState(false)
     const [confidence, setConfidence] = useState(confidenceLvl[0])
     const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
 
     const toaster = useToast()
     const toast = (value) => {
@@ -147,16 +148,31 @@ export default function FactCheck({ article, error, initTrueVotes, initFalseVote
         })
     }
 
-    // Throw error if article id is broken
-    if (error && error.statusCode)
-    return <Error statusCode={error.statusCode} title={error.statusText} />
+    // Throw sessionError if article id is broken
+    if (sessionError && sessionError.statusCode)
+    return <Error statusCode={sessionError.statusCode} title={sessionError.statusText} />
 
+    function handleConfidenceChange(selectedValue) {
+        setConfidence(selectedValue)
+    }
+
+    function handleSubmit(selectedVote) {
+        console.log(selectedVote)
+        // Set the selected vote
+        setSelectedVote(selectedVote)
+        // Perform the validation check
+        if (confidence.value === 0) {
+            setError('Please select a confidence level.')
+            return
+        } else {
+            setError('')
+        }
+        onOpen()
+    }
 
     // Execute to interact with smart contract
-    async function handleSubmitVote() {
-        console.log(selectedVote)
+    async function handleConfirmSubmitVote() {
         setLoading(true)
-
         if (isConnected) {
             console.log(provider)
             const signer = provider.getSigner()
@@ -199,11 +215,12 @@ export default function FactCheck({ article, error, initTrueVotes, initFalseVote
             setLoading(false)
         }
         setLoading(false)
+        onClose()
     }
 
     return (
         <DashboardLayout>
-            <div className="pt-32 pb-10 px-7 md:px-20 items-center justify-center">
+            <div className="pt-32 pb-10 px-7 md:px-10 items-center justify-center">
                 <div className="w-full md:max-w-[1280px] flex flex-wrap">
                     <div className="w-full xl:w-[50%] mt-5">
                         <div id="article-details">
@@ -306,10 +323,7 @@ export default function FactCheck({ article, error, initTrueVotes, initFalseVote
                                 <div className="pl-10 pr-5 md:px-10 py-2">
                                     <div className="w-full">
                                         <button
-                                            onClick={() => {
-                                                setSelectedVote(true)
-                                                onOpen()
-                                            }}
+                                            onClick={() => handleSubmit(true)}
                                             type="button"
                                             disabled={loading}
                                             className={`text-white bg-emerald-500 hover:bg-emerald-400 rounded-lg px-7 py-2.5 mr-5 mb-2 text-center text-sm font-medium font-display`}
@@ -331,10 +345,7 @@ export default function FactCheck({ article, error, initTrueVotes, initFalseVote
                                             )}
                                         </button>
                                         <button
-                                            onClick={() => {
-                                                setSelectedVote(false)
-                                                onOpen()
-                                            }}
+                                            onClick={() => handleSubmit(false)}
                                             type="button"
                                             disabled={loading}
                                             className="text-white bg-red-500 hover:bg-red-400 rounded-lg px-6 py-2.5 mr-5 text-center text-sm font-medium font-display"
@@ -369,7 +380,7 @@ export default function FactCheck({ article, error, initTrueVotes, initFalseVote
                                 </div>
                                 <div className="pl-10 pr-5 md:px-10 py-2 w-[21rem]">
                                     <div className="w-full">
-                                        <Listbox value={confidence} onChange={setConfidence}>
+                                        <Listbox value={confidence} onChange={handleConfidenceChange}>
                                             <div className="relative mt-1">
                                                 <Listbox.Button className="relative w-full cursor-default text-left bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-800 focus:border-gray-800 focus:ring-1 block p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white">
                                                     <span className="block truncate">{confidence.name}</span>
@@ -419,6 +430,7 @@ export default function FactCheck({ article, error, initTrueVotes, initFalseVote
                                                 </Transition>
                                             </div>
                                         </Listbox>
+                                        { error && <p className="text-sm text-red-500">{error}</p> }
                                     </div>
                                 </div>
                             </div>
@@ -509,10 +521,7 @@ export default function FactCheck({ article, error, initTrueVotes, initFalseVote
                             <AlertDialogFooter>
                                 <div className="flex w-full flex-row-reverse mt-5">
                                     <button
-                                        onClick={()=> {
-                                            handleSubmitVote()
-                                            onClose()
-                                        }}
+                                        onClick={handleConfirmSubmitVote}
                                         type="button"
                                         disabled={loading}
                                         className="text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-8 py-2.5 mx-2 text-center text-sm font-medium font-display"
@@ -605,7 +614,7 @@ export async function getServerSideProps(context) {
     return {
         props: {
             //session,
-            error: {
+            sessionError: {
                 statusCode: res.status,
                 statusText: "Invalid Id",
             }

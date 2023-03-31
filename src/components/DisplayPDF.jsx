@@ -81,7 +81,7 @@ export default function DisplayPDF ({ cid }) {
         <div className="wrapper border-2 border-gray-400 rounded-md my-5 p-2" ref={wrapperDiv}>
             <Document 
                 file={pdf}
-                renderMode="svg"
+                renderMode="canvas"
                 noData={''}
                 onLoadError={(error) => console.log(error)}
                 onLoadSuccess={onDocumentLoadSuccess}
