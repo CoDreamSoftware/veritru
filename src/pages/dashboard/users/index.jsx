@@ -6,7 +6,7 @@ import DashboardLayout from '@/components/DashboardLayout'
 import UsersTable from '@/components/UsersTable'
 
 // Custom use** Hook instead of using SWR - stale while revalidate
-function useUpdatedUsers ( initialRenderedUsers, interval = 3000) {
+function useUpdatedUsers(initialRenderedUsers, interval = 3000) {
     const [data, setData] = useState(initialRenderedUsers)
 
     useEffect(() => {

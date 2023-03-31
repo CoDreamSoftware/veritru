@@ -29,7 +29,7 @@ import {
 } from '@chakra-ui/react'
 
 import { useAccount } from 'wagmi'
-import { Veritru } from '@/contracts/veritru'
+import { VeritruProvider, VeritruSigner } from '@/contracts/veritru'
 import { getProvider } from '@/contracts/provider'
 
 const confidenceLvl = [
@@ -39,7 +39,92 @@ const confidenceLvl = [
     { name: 'Highly Confident', value: 3 }
 ]
 
-export default function FactCheck({ article, error, trueVotes, falseVotes, totalVotes }) {
+// Custom use** Hook instead of using SWR - stale while revalidate
+function useTrueVotes(ipfs_cid, initTrueVotes, interval = 5000) {
+    const [trueVotes, setTrueVotes] = useState(initTrueVotes)
+
+    useEffect(() => {
+        async function fetchData() {
+            // Get ethers provider
+            const provider = getProvider()
+            // Connect to smart contract
+            const veritru = await VeritruProvider(provider)
+
+            try {
+                const trueVotesData = await veritru.getTrueVotes(ipfs_cid)
+                setTrueVotes(trueVotesData.toString())
+            } catch (error) {
+                console.log(error)
+                setTrueVotes(0)
+            }
+        }
+
+        const intervalId = setInterval(fetchData, interval)
+        return () => clearInterval(intervalId)
+    }, [ipfs_cid, interval])
+
+    return trueVotes
+}
+
+// Custom use** Hook instead of using SWR - stale while revalidate
+function useFalseVotes(ipfs_cid, initFalseVotes, interval = 5000) {
+    const [falseVotes, setFalseVotes] = useState(initFalseVotes)
+
+    useEffect(() => {
+        async function fetchData() {
+            // Get ethers provider
+            const provider = getProvider()
+            // Connect to smart contract
+            const veritru = await VeritruProvider(provider)
+
+            try {
+                const falseVotesData = await veritru.getFalseVotes(ipfs_cid)
+                setFalseVotes(falseVotesData.toString())
+            } catch (error) {
+                console.log(error)
+                setFalseVotes(0)
+            }
+        }
+
+        const intervalId = setInterval(fetchData, interval)
+        return () => clearInterval(intervalId)
+    }, [ipfs_cid, interval])
+
+    return falseVotes
+}
+
+// Custom use** Hook instead of using SWR - stale while revalidate
+function useTotalVotes(ipfs_cid, initTotalVotes, interval = 5000) {
+    const [totalVotes, setTotalVotes] = useState(initTotalVotes)
+
+    useEffect(() => {
+        async function fetchData() {
+            // Get ethers provider
+            const provider = getProvider()
+            // Connect to smart contract
+            const veritru = await VeritruProvider(provider)
+
+            try {
+                const totalVotesData = await veritru.getTotalVotes(ipfs_cid)
+                setTotalVotes(totalVotesData.toString())
+            } catch (error) {
+                console.log(error)
+                setTotalVotes(0)
+            }
+        }
+
+        const intervalId = setInterval(fetchData, interval)
+        return () => clearInterval(intervalId)
+    }, [ipfs_cid, interval])
+
+    return totalVotes
+}
+
+export default function FactCheck({ article, error, initTrueVotes, initFalseVotes, initTotalVotes }) {
+    const trueVotes = useTrueVotes(article.ipfs_cid, initTrueVotes)
+    const falseVotes = useFalseVotes(article.ipfs_cid, initFalseVotes)
+    const totalVotes = useTotalVotes(article.ipfs_cid, initTotalVotes)
+
     const { address, isConnected } = useAccount()
     const provider = getProvider()
 
@@ -74,7 +159,8 @@ export default function FactCheck({ article, error, trueVotes, falseVotes, total
 
         if (isConnected) {
             console.log(provider)
-            const veritru = await Veritru(provider)
+            const signer = provider.getSigner()
+            const veritru = await VeritruSigner(signer)
 
             try {
                 const signedTx = await veritru.vote(
@@ -88,11 +174,21 @@ export default function FactCheck({ article, error, trueVotes, falseVotes, total
                     stats: 'success'
                 })
             } catch (error) {
-                toast({
-                    title: 'Error!', 
-                    msg: 'You already voted for this article.', 
-                    stats: 'error'
-                })
+                console.log(error)
+                if (error.message === 'Internal JSON-RPC error.') {
+                    toast({
+                        title: 'Error!', 
+                        msg: 'You already voted for this article.', 
+                        stats: 'error'
+                    })
+                } else {
+                    toast({
+                        title: 'Error!', 
+                        msg: error.message.substring(0,26) + "...", 
+                        stats: 'error'
+                    })
+                }
+                setLoading(false)
             }
         } else {
             toast({
@@ -100,6 +196,7 @@ export default function FactCheck({ article, error, trueVotes, falseVotes, total
                 msg: 'Wallet not connected!', 
                 stats: 'error'
             })
+            setLoading(false)
         }
         setLoading(false)
     }
@@ -465,12 +562,23 @@ export async function getServerSideProps(context) {
     // Get ethers provider
     const provider = getProvider()
     // Connect to smart contract
-    const veritru = await Veritru(provider)
+    const veritru = await VeritruProvider(provider)
 
-    // Call smart contract function
-    const trueVotes = await veritru.getArticleTrueVotes(article.ipfs_cid)
-    const falseVotes = await veritru.getArticleFalseVotes(article.ipfs_cid)
-    const totalVotes = await veritru.getArticleTotalVotes(article.ipfs_cid)
+    // Call smart contract function and handle the error
+    let initTrueVotes, initFalseVotes, initTotalVotes
+    try {
+        const trueVotes = await veritru.getTrueVotes(article.ipfs_cid)
+        const falseVotes = await veritru.getFalseVotes(article.ipfs_cid)
+        const totalVotes = await veritru.getTotalVotes(article.ipfs_cid)
+        initTrueVotes = trueVotes.toString()
+        initFalseVotes = falseVotes.toString()
+        initTotalVotes = totalVotes.toString()
+    } catch (error) {
+        console.log(error)
+        initTrueVotes = "0"
+        initFalseVotes = "0"
+        initTotalVotes = "0"
+    }
 
     console.log(session)
     if (!session) {
@@ -487,9 +595,9 @@ export async function getServerSideProps(context) {
             props: {
                 //session,
                 article,
-                trueVotes: trueVotes.toString(),
-                falseVotes: falseVotes.toString(),
-                totalVotes: totalVotes.toString(),
+                initTrueVotes: initTrueVotes,
+                initFalseVotes: initFalseVotes,
+                initTotalVotes: initTotalVotes,
             }
         }
     }

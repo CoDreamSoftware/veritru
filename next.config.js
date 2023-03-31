@@ -22,6 +22,7 @@ const nextConfig = {
         CONTRACT_ADDRESS: process.env.CONTRACT_ADDRESS,
         GOOGLE_EMAIL_ADDRESS: process.env.GOOGLE_EMAIL_ADDRESS,
         GOOGLE_APP_PASSWORD: process.env.GOOGLE_APP_PASSWORD,
+        GANACHE_URL: process.env.GANACHE_URL,
     }
 }
 
