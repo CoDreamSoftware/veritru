@@ -30,7 +30,7 @@ import {
 
 import { useAccount } from 'wagmi'
 import { Veritru } from '@/contracts/veritru'
-import provider from '@/contracts/provider'
+import { getProvider } from '@/contracts/provider'
 
 const confidenceLvl = [
     { name: 'Select', value: 0 },
@@ -39,8 +39,9 @@ const confidenceLvl = [
     { name: 'Highly Confident', value: 3 }
 ]
 
-export default function FactCheck({ article, error }) {
+export default function FactCheck({ article, error, trueVotes, falseVotes, totalVotes }) {
     const { address, isConnected } = useAccount()
+    const provider = getProvider()
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const cancelRef = useRef()
@@ -72,8 +73,8 @@ export default function FactCheck({ article, error }) {
         setLoading(true)
 
         if (isConnected) {
-            const signer = provider.getSigner()
-            const veritru = await Veritru(signer)
+            console.log(provider)
+            const veritru = await Veritru(provider)
 
             try {
                 const signedTx = await veritru.vote(
@@ -334,7 +335,7 @@ export default function FactCheck({ article, error }) {
                                                     Total True Votes
                                                 </h5>
                                                 <span className="font-semibold text-xl text-gray-700">
-                                                    204
+                                                    {trueVotes}
                                                 </span>
                                             </div>
                                             <div className="relative w-auto pl-4 flex-initial">
@@ -345,7 +346,7 @@ export default function FactCheck({ article, error }) {
                                         </div>
                                         <p className="text-sm text-gray-400 mt-4">
                                             <span className="text-emerald-500">
-                                                100%
+                                                {(trueVotes/totalVotes) * 100 } %
                                             </span>
                                             <span className="mx-2 whitespace-nowrap">
                                                 of total votes
@@ -362,7 +363,7 @@ export default function FactCheck({ article, error }) {
                                                     Total False Votes
                                                 </h5>
                                                 <span className="font-semibold text-xl text-gray-700">
-                                                    204
+                                                    {falseVotes}
                                                 </span>
                                             </div>
                                             <div className="relative w-auto pl-4 flex-initial">
@@ -373,7 +374,7 @@ export default function FactCheck({ article, error }) {
                                         </div>
                                         <p className="text-sm text-gray-400 mt-4">
                                             <span className="text-rose-500">
-                                                100%
+                                                {(falseVotes/totalVotes) * 100 } %
                                             </span>
                                             <span className="mx-2 whitespace-nowrap">
                                                 of total votes
@@ -458,6 +459,18 @@ export async function getServerSideProps(context) {
     const res = await fetch(`${assetPrefix}/api/articles/${id}`, {
         method: 'GET',
     })
+    const article = await res.json()
+    console.log(article)
+
+    // Get ethers provider
+    const provider = getProvider()
+    // Connect to smart contract
+    const veritru = await Veritru(provider)
+
+    // Call smart contract function
+    const trueVotes = await veritru.getArticleTrueVotes(article.ipfs_cid)
+    const falseVotes = await veritru.getArticleFalseVotes(article.ipfs_cid)
+    const totalVotes = await veritru.getArticleTotalVotes(article.ipfs_cid)
 
     console.log(session)
     if (!session) {
@@ -470,9 +483,15 @@ export async function getServerSideProps(context) {
     }
     
     if (res.status === 200) {
-        const article = await res.json()
-
-        return {props: { article }}
+        return {
+            props: {
+                //session,
+                article,
+                trueVotes: trueVotes.toString(),
+                falseVotes: falseVotes.toString(),
+                totalVotes: totalVotes.toString(),
+            }
+        }
     }
 
     return {

@@ -5,11 +5,11 @@ import { ethers } from "ethers"
 const contractAddress = process.env.CONTRACT_ADDRESS
 
 // Contract
-export async function Veritru(signer) {
+export async function Veritru(provider) {
     const instance = new ethers.Contract(
         contractAddress,
         contract.abi,
-        signer
+        provider
     )
     return instance
 }
