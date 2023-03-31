@@ -6,10 +6,10 @@ import { Fragment, useRef, useState, useEffect } from 'react'
 import DisplayPDF from '@/components/DisplayPDF'
 import DashboardLayout from '@/components/DashboardLayout'
 import { formatDate } from '@/utilities/tools.utils'
+import { Listbox, Transition } from '@headlessui/react'
 import { RiCloseCircleFill } from "react-icons/ri"
 import { IoStatsChart } from "react-icons/io5"
 import { FiChevronDown, FiCheck } from 'react-icons/fi'
-import { Listbox, Transition } from '@headlessui/react'
 import { 
     BsFillQuestionCircleFill,
     BsCheckCircleFill,
@@ -28,9 +28,11 @@ import {
     useToast,
 } from '@chakra-ui/react'
 
+import { updateResult } from '@/services/articles'
 import { useAccount } from 'wagmi'
 import { VeritruProvider, VeritruSigner } from '@/contracts/veritru'
 import { getProvider } from '@/contracts/provider'
+import jStat from 'jstat'
 
 const confidenceLvl = [
     { name: 'Select', value: null },
@@ -138,12 +140,70 @@ function useTotalVotes(ipfs_cid, initTotalVotes, interval = 4000) {
     return totalVotes
 }
 
-export default function FactCheck({ user, article, sessionError, initTrueVotes, initFalseVotes, initTotalVotes }) {
+// Custom use** Hook instead of using SWR - stale while revalidate
+function useConfidences(ipfs_cid, initConfidences, interval = 4000) {
+    const [confidences, setConfidences] = useState(initConfidences)
+
+    useEffect(() => {
+        async function fetchData() {
+            // Get ethers provider
+            const provider = getProvider()
+            // Connect to smart contract
+            const veritru = await VeritruProvider(provider)
+
+            try {
+                const confidencesList = await veritru.getConfidenceLevels(ipfs_cid)
+                setConfidences(confidencesList.toString())
+            } catch (error) {
+                console.log(error)
+                setConfidences(0)
+            }
+        }
+
+        const intervalId = setInterval(fetchData, interval)
+        return () => clearInterval(intervalId)
+    }, [ipfs_cid, interval])
+
+    return confidences
+}
+
+// Custom use** Hook instead of using SWR - stale while revalidate
+function useExpScores(ipfs_cid, initExpScores, interval = 4000) {
+    const [expScores, setExpScores] = useState(initExpScores)
+
+    useEffect(() => {
+        async function fetchData() {
+            // Get ethers provider
+            const provider = getProvider()
+            // Connect to smart contract
+            const veritru = await VeritruProvider(provider)
+
+            try {
+                const expScoresList = await veritru.getExpScores(ipfs_cid)
+                setExpScores(expScoresList.toString())
+            } catch (error) {
+                console.log(error)
+                setExpScores(0)
+            }
+        }
+
+        const intervalId = setInterval(fetchData, interval)
+        return () => clearInterval(intervalId)
+    }, [ipfs_cid, interval])
+
+    return expScores
+}
+
+export default function FactCheck({ 
+    user, article, sessionError, initTrueVotes, initFalseVotes, initTotalVotes, initConfidences, initExpScores
+}) {
     const trueVotes = useTrueVotes(article.ipfs_cid, initTrueVotes)
     const falseVotes = useFalseVotes(article.ipfs_cid, initFalseVotes)
     const totalVotes = useTotalVotes(article.ipfs_cid, initTotalVotes)
+    const confidences = useConfidences(article.ipfs_cid, initConfidences)
+    const expScores = useExpScores(article.ipfs_cid, initExpScores)
 
-    const { address, isConnected } = useAccount()
+    const { isConnected } = useAccount()
     const provider = getProvider()
 
     const { isOpen, onOpen, onClose } = useDisclosure()
@@ -167,6 +227,9 @@ export default function FactCheck({ user, article, sessionError, initTrueVotes, 
     }
 
     useEffect(() => {
+        console.log('confidences: ', confidences)
+        console.log('expScores: ', expScores)
+
         console.log(user.tenure, user.organization, user.role)
         console.log(confidence.value)
     }, [user, confidence])
@@ -238,17 +301,19 @@ export default function FactCheck({ user, article, sessionError, initTrueVotes, 
                     msg: 'Your vote was successfully recorded.', 
                     stats: 'success'
                 })
+                // Update result in database
+                handleUpdateResult()
             } catch (error) {
                 console.log(error)
                 if (error.message === 'Internal JSON-RPC error.') {
                     toast({
-                        title: 'Error!', 
+                        title: 'Error!',
                         msg: 'You already voted for this article.', 
                         stats: 'error'
                     })
                 } else {
                     toast({
-                        title: 'Error!', 
+                        title: 'Error!',
                         msg: error.message.substring(0,26) + "...", 
                         stats: 'error'
                     })
@@ -267,6 +332,49 @@ export default function FactCheck({ user, article, sessionError, initTrueVotes, 
         onClose()
     }
 
+    function probitModel(trueVotes, confidences, expScores) {
+        let weightedSum = 0
+
+        // parse confidences and expScores to an array
+        const confidencesArray = confidences.split(',').map(Number)
+        const expScoresArray = expScores.split(',').map(Number)
+
+        for (let i = 0; i < confidencesArray.length; i++) {
+            if (i < trueVotes) {
+                weightedSum += confidencesArray[i] * expScoresArray[i]
+            } else {
+                weightedSum -= confidencesArray[i] * expScoresArray[i]
+            }
+        }
+
+        const sd = Math.sqrt(confidencesArray.reduce((acc, c) => acc + c ** 2, 0))
+        const mle = weightedSum / sd
+        const cdf = jStat.normal.cdf(mle, 0, 1)
+
+        return { cdf, sd, mle }
+    }
+
+    const { cdf, sd, mle } = probitModel(trueVotes, confidences, expScores)
+    const outcome = cdf >= 0.5
+
+    // Results of PROBIT Model
+    console.log(`Probability of outcome: ${(cdf * 100).toFixed(2)}%`)
+    console.log(`Standard deviation: ${sd.toFixed(2)}`)
+    console.log(`Cumulative distribution function: ${cdf.toFixed(2)}`)
+    console.log(`Parameter of maximum likelihood: ${mle.toFixed(2)}`)
+    console.log(`Outcome: ${outcome.toString()}`)
+
+    async function handleUpdateResult() {
+        const firstLetter = outcome.toString().charAt(0)
+        const result = firstLetter.toUpperCase() + outcome.toString().slice(1)
+
+        const res = await updateResult(article._id, result)
+
+        if (res.success) {
+            console.log("Result: ", result)
+        }
+    }
+
     return (
         <DashboardLayout>
             <div className="pt-32 pb-10 px-7 md:px-10 items-center justify-center">
@@ -277,15 +385,15 @@ export default function FactCheck({ user, article, sessionError, initTrueVotes, 
                                 <div className="py-2 font-medium text-gray-900 dark:text-white">
                                     <div className="w-[100px]">
                                         <h3>
-                                            Status:
+                                            Outcome:
                                         </h3>
                                     </div>
                                 </div>
                                 <div className="pl-10 pr-5 md:pl-10 md:px-10 py-2">
                                     <div className="w-full flex">
-                                        <BsFillQuestionCircleFill className="mr-2 text-gray-500" size="24" />
-                                        {/* <BsCheckCircleFill className="mr-2 text-green-500" size="24" /> */}
-                                        {/* <RiCloseCircleFill className="mr-2 text-red-500" size="26" /> */}
+                                        {article.result === 'Undetermined' && <BsFillQuestionCircleFill className="mr-2 text-gray-500" size="24" />}
+                                        {article.result === 'True' && <BsCheckCircleFill className="mr-2 text-green-500" size="24" />}
+                                        {article.result === 'False' && <RiCloseCircleFill className="mr-2 text-red-500" size="26" />}
                                         <p className="text-sm">
                                             {article.result}
                                         </p>
@@ -633,14 +741,20 @@ export async function getServerSideProps(context) {
     const veritru = await VeritruProvider(provider)
 
     // Call smart contract function and handle the error
-    let initTrueVotes, initFalseVotes, initTotalVotes
+    let initTrueVotes, initFalseVotes, initTotalVotes, initConfidences, initExpScores
     try {
         const trueVotes = await veritru.getTrueVotes(article.ipfs_cid)
         const falseVotes = await veritru.getFalseVotes(article.ipfs_cid)
         const totalVotes = await veritru.getTotalVotes(article.ipfs_cid)
+        const confidences = await veritru.getConfidenceLevels(article.ipfs_cid)
+        const expScores = await veritru.getExpScores(article.ipfs_cid)
         initTrueVotes = trueVotes.toString()
         initFalseVotes = falseVotes.toString()
         initTotalVotes = totalVotes.toString()
+        initConfidences = confidences.toString()
+        initExpScores = expScores.toString()
+        console.log("confidences:", confidences.toString())
+        console.log("expScores:", expScores.toString())
     } catch (error) {
         console.log(error)
         initTrueVotes = "0"
@@ -657,7 +771,7 @@ export async function getServerSideProps(context) {
             },
         }
     }
-    
+
     if (res.status === 200) {
         return {
             props: {
@@ -667,6 +781,8 @@ export async function getServerSideProps(context) {
                 initTrueVotes: initTrueVotes,
                 initFalseVotes: initFalseVotes,
                 initTotalVotes: initTotalVotes,
+                initConfidences: initConfidences,
+                initExpScores: initExpScores,
             }
         }
     }
