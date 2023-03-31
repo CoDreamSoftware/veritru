@@ -449,14 +449,16 @@ export default function FactCheck({ article, error }) {
 }
 
 // Pre-render props SSR
-export async function getServerSideProps({ query: { id }, context }) {
-    const session = await getSession(context)
+export async function getServerSideProps(context) {
+    const { query: { id }, req } = context
+    const session = await getSession({req})
 
     // GET method that fetches an entry from mongodb using ID
     const res = await fetch(`${assetPrefix}/api/articles/${id}`, {
         method: 'GET',
     })
 
+    console.log(session)
     if (!session) {
         return {
             redirect: {
