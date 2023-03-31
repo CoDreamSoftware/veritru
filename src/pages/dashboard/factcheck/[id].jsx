@@ -83,12 +83,13 @@ export default function FactCheck({ article, error }) {
                 console.log("Status: ", signedTx)
                 toast({
                     title: 'Voted Successfully',
+                    msg: 'Your vote was successfully recorded.', 
                     stats: 'success'
                 })
             } catch (error) {
                 toast({
                     title: 'Error!', 
-                    msg: `${error.message.substring(0,25) + "..."}`, 
+                    msg: 'You already voted for this article.', 
                     stats: 'error'
                 })
             }
