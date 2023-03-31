@@ -104,9 +104,9 @@ export default function FactCheck({ initialRenderedUsers }) {
 // Pre-render server props
 export async function getServerSideProps(context) {
     const session = await getSession(context)
-
     const initialRenderedUsers = await getUsers()
 
+    console.log(session)
     if (!session) {
         return {
             redirect: {

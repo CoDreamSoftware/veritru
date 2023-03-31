@@ -20,6 +20,8 @@ const nextConfig = {
         MONGODB_URI: process.env.MONGODB_URI,
         PRIVATE_KEY: process.env.PRIVATE_KEY,
         CONTRACT_ADDRESS: process.env.CONTRACT_ADDRESS,
+        GOOGLE_EMAIL_ADDRESS: process.env.GOOGLE_EMAIL_ADDRESS,
+        GOOGLE_APP_PASSWORD: process.env.GOOGLE_APP_PASSWORD,
     }
 }
 

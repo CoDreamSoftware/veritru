@@ -2,7 +2,7 @@
 import { assetPrefix } from '@/next/next.config'
 import dbConnect from '@/lib/dbConnect'
 import User from '@/models/User'
-// import { sendEmail } from '@/services/mailer'
+import { sendEmail } from '@/services/mailer'
 
 export default async (req, res) => {
     await dbConnect()
@@ -27,14 +27,14 @@ export default async (req, res) => {
             return
         }
 
-        // const url = `${assetPrefix}`
+        const url = `${assetPrefix}`
 
-        // // Send approval email
-        // await sendEmail({
-        //     to: user.email,
-        //     subject: 'Registration as Reviewer Approved - Veritru App',
-        //     html: `<h1>Your registration has been approved!</h1><p>Click <a href="${url}">here</a> to login.</p>`,
-        // })
+        // Send approval email
+        await sendEmail({
+            to: user.email,
+            subject: 'Registration as Reviewer Approved - Veritru App',
+            html: `<h3>Your registration has been approved!<br/>Click <a href="${url}">here</a> to login.</h3>`,
+        })
 
         res.status(200).json({ success: true, message: `User's Access Granted.` })
     } else {
