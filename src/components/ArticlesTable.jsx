@@ -1,12 +1,14 @@
 import Link from 'next/link'
 
 import { HiDocumentMagnifyingGlass } from 'react-icons/hi2'
+import { RiCloseCircleFill } from "react-icons/ri"
+import { BsFillQuestionCircleFill, BsCheckCircleFill } from "react-icons/bs"
 
 export default function ArticlesTable({ id, article }) {
     return (
         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             <th scope="row" className="px-6 py-2 font-medium text-gray-900">
-                <div className="w-5">
+                <div className="w-0">
                     {id}
                 </div>
             </th>
@@ -27,12 +29,15 @@ export default function ArticlesTable({ id, article }) {
                 </div>
             </td>
             <td className="px-6 py-2">
-                <div className="w-36">
+                <div className="w-20">
                     {article.category}
                 </div>
             </td>
             <td className="px-6 py-2">
-                <div className="w-26">
+                <div className="w-26 flex flex-row">
+                    {article.result === 'Undetermined' && <BsFillQuestionCircleFill className="mr-2 text-gray-500" size="24" />}
+                    {article.result === 'True' && <BsCheckCircleFill className="mr-2 text-green-500" size="24" />}
+                    {article.result === 'False' && <RiCloseCircleFill className="mr-2 text-red-500" size="26" />}
                     {article.result}
                 </div>
             </td>

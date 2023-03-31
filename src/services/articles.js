@@ -23,3 +23,25 @@ export async function getArticles() {
     const data = await res.json()
     return data
 }
+
+// UPDATE the results of the article
+export async function updateResult(id, result) {
+    try {
+        const res = await fetch(`${assetPrefix}/api/articles/result?id=${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({result})
+        })
+
+        if (!res.ok) {
+            throw new Error(`Error: ${res.status} - ${await res.text()}`)
+        }
+
+        const data = res.json()
+        return data
+    } catch (error) {
+        console.log('Error updating result => ' + error)
+    }
+}
