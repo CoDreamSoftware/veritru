@@ -50,38 +50,40 @@ contract Veritru {
     // // // // // // // // // // // // // //
     // //   GET VOTE OF THE REVIEWER   // //
     // // // // // // // // // // // // //
-    function getArticleVote(string memory _ipfs_cid, address _voter) public view returns (bool) {
+    function getVote(string memory _ipfs_cid, address _voter) public view returns (bool) {
         Article storage article = articles[_ipfs_cid];
-        require(article.exists, "Article with this IPFS CID does not exist");
-
         return article.votes[_voter];
     }
 
     // // // // // // // // // // // // //
     // //    GET TOTAL TRUE VOTES   // //
     // // // // // // // // // // // //
-    function getArticleTrueVotes(string memory _ipfs_cid) public view returns (uint) {
+    function getTrueVotes(string memory _ipfs_cid) public view returns (uint) {
         Article storage article = articles[_ipfs_cid];
-        require(article.exists, "Article with this IPFS CID does not exist");
+
+        if (!article.exists) {
+            return 0;
+        }
 
         uint trueVotes = 0;
-
         for (uint i = 0; i < article.voters.length; i++) {
             address voter = article.voters[i];
             if (article.votes[voter]) {
                 trueVotes++;
             }
         }
-
         return trueVotes;
     }
 
     // // // // // // // // // // // // //
     // //   GET TOTAL FALSE VOTES   // //
     // // // // // // // // // // // //
-    function getArticleFalseVotes(string memory _ipfs_cid) public view returns (uint) {
+    function getFalseVotes(string memory _ipfs_cid) public view returns (uint) {
         Article storage article = articles[_ipfs_cid];
-        require(article.exists, "Article with this IPFS CID does not exist");
+
+        if (!article.exists) {
+            return 0;
+        }
 
         uint falseVotes = 0;
         for (uint i = 0; i < article.voters.length; i++) {
@@ -90,17 +92,18 @@ contract Veritru {
                 falseVotes++;
             }
         }
-
         return falseVotes;
     }
 
     // // // // // // // // // //
     // //   TOTAL VOTES    // //
     // // // // // // // // //
-    function getArticleTotalVotes(string memory _ipfs_cid) public view returns (uint) {
+    function getTotalVotes(string memory _ipfs_cid) public view returns (uint) {
         Article storage article = articles[_ipfs_cid];
-        require(article.exists, "Article with this IPFS CID does not exist");
 
+        if (!article.exists) {
+            return 0;
+        }
         return article.voters.length;
     }
 
