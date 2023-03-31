@@ -6,6 +6,11 @@ export async function grantAccess(userId) {
         const res = await fetch(`${assetPrefix}/api/users/grant?id=${userId}`, {
             method: 'PUT',
         })
+
+        if (!res.ok) {
+            throw new Error(`Error: ${res.status} - ${await res.text()}`)
+        }
+
         const data = res.json()
         return data
     } catch (error) {
@@ -19,6 +24,11 @@ export async function revokeAccess(userId) {
         const res = await fetch(`${assetPrefix}/api/users/revoke?id=${userId}`, {
             method: 'PUT',
         })
+
+        if (!res.ok) {
+            throw new Error(`Error: ${res.status} - ${await res.text()}`)
+        }
+
         const data = res.json()
         return data
     } catch (error) {

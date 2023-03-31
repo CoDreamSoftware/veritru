@@ -4,7 +4,7 @@ const isProd = process.env.NODE_ENV === 'production'
 
 const nextConfig = {
     reactStrictMode: true,
-    compiler: { removeConsole: isProd ? true : false },
+    // compiler: { removeConsole: isProd ? true : false },
     assetPrefix: isProd ? 'https://veritru.vercel.app' : 'http://localhost:3000',
     images: {
         dangerouslyAllowSVG: true,
