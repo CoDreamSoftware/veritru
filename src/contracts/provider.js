@@ -12,10 +12,10 @@ if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
     provider = new ethers.providers.Web3Provider(window.ethereum)
 }
 
-// If using Ganache during development
-else if (process.env.NODE_ENV === "development") {
-    provider = new ethers.providers.JsonRpcProvider(GANACHE_URL)
-}
+// // If using Ganache during development
+// else if (process.env.NODE_ENV === "development") {
+//     provider = new ethers.providers.JsonRpcProvider(GANACHE_URL)
+// }
 
 // Use Infura Provider instead
 else {
