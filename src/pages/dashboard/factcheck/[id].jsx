@@ -33,10 +33,28 @@ import { VeritruProvider, VeritruSigner } from '@/contracts/veritru'
 import { getProvider } from '@/contracts/provider'
 
 const confidenceLvl = [
-    { name: 'Select', value: 0 },
-    { name: 'Not Confident', value: 1 },
-    { name: 'Confident', value: 2 },
-    { name: 'Highly Confident', value: 3 }
+    { name: 'Select', value: null },
+    { name: 'Not Confident', value: -1 },
+    { name: 'Confident', value: 0 },
+    { name: 'Highly Confident', value: 1 }
+]
+
+const yrsExp = [
+    { name: '0-5 years', value: 1 },
+    { name: '5-10 years', value: 2 },
+    { name: '10+ years', value: 3 }
+]
+
+const organization = [
+    { name: 'Freelancer', value: 1 },
+    { name: 'Regional', value: 2 },
+    { name: 'Local', value: 3 },
+    { name: 'National', value: 4 }
+]
+
+const category = [
+    { name: 'Independent', value: 1 },
+    { name: 'Journalist', value: 2 }
 ]
 
 // Custom use** Hook instead of using SWR - stale while revalidate
@@ -120,7 +138,7 @@ function useTotalVotes(ipfs_cid, initTotalVotes, interval = 4000) {
     return totalVotes
 }
 
-export default function FactCheck({ article, sessionError, initTrueVotes, initFalseVotes, initTotalVotes }) {
+export default function FactCheck({ user, article, sessionError, initTrueVotes, initFalseVotes, initTotalVotes }) {
     const trueVotes = useTrueVotes(article.ipfs_cid, initTrueVotes)
     const falseVotes = useFalseVotes(article.ipfs_cid, initFalseVotes)
     const totalVotes = useTotalVotes(article.ipfs_cid, initTotalVotes)
@@ -148,6 +166,11 @@ export default function FactCheck({ article, sessionError, initTrueVotes, initFa
         })
     }
 
+    useEffect(() => {
+        console.log(user.tenure, user.organization, user.role)
+        console.log(confidence.value)
+    }, [user, confidence])
+
     // Throw sessionError if article id is broken
     if (sessionError && sessionError.statusCode)
     return <Error statusCode={sessionError.statusCode} title={sessionError.statusText} />
@@ -161,13 +184,33 @@ export default function FactCheck({ article, sessionError, initTrueVotes, initFa
         // Set the selected vote
         setSelectedVote(selectedVote)
         // Perform the validation check
-        if (confidence.value === 0) {
+        if (confidence.value === null) {
             setError('Please select a confidence level.')
             return
         } else {
             setError('')
         }
         onOpen()
+    }
+
+    // convert user values to ordinal values
+    function equivalence(input, mapping) {
+        const result = {}
+        for(const key in input) {
+            const mappedValue = mapping.find((item) => item.name === input[key])
+            if (mappedValue) {
+                result[key] = mappedValue.value
+            }
+        }
+        console.log(result)
+        return result
+    }
+
+    // assign equivalence to user values
+    const exp = {
+        ...equivalence({ tenure: user.tenure }, yrsExp),
+        ...equivalence({ organization: user.organization }, organization),
+        ...equivalence({ role: user.role }, category),
     }
 
     // Execute to interact with smart contract
@@ -178,10 +221,16 @@ export default function FactCheck({ article, sessionError, initTrueVotes, initFa
             const signer = provider.getSigner()
             const veritru = await VeritruSigner(signer)
 
+            const expScore = exp.tenure + exp.organization + exp.role
+            console.log(exp)
+            console.log(expScore)
+
             try {
                 const signedTx = await veritru.vote(
                     article.ipfs_cid,
-                    selectedVote
+                    selectedVote,
+                    confidence.value,
+                    expScore
                 )
                 console.log("Status: ", signedTx)
                 toast({
@@ -568,6 +617,16 @@ export async function getServerSideProps(context) {
     const article = await res.json()
     console.log(article)
 
+    // GET method that fetches an entry from mongodb using ID
+    const resUser = await fetch(`${assetPrefix}/api/users/getUser?email=${session.user.email}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    const user = await resUser.json()
+    console.log(user)
+
     // Get ethers provider
     const provider = getProvider()
     // Connect to smart contract
@@ -603,6 +662,7 @@ export async function getServerSideProps(context) {
         return {
             props: {
                 //session,
+                user,
                 article,
                 initTrueVotes: initTrueVotes,
                 initFalseVotes: initFalseVotes,
