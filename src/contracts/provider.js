@@ -7,8 +7,12 @@ let provider
 // Let user interact with metamask provider
 if (typeof window !== "undefined" && typeof window.ethereum !== "undefined") {
     // We are in the browser and metamask is running.
-    window.ethereum.request({ method: "eth_requestAccounts" })
-    provider = new ethers.providers.Web3Provider(window.ethereum)
+    if (localStorage.getItem('userConnectedWallet') === 'true') {
+        if (localStorage.getItem('isWalletConnected') === 'true') {
+            window.ethereum.request({ method: "eth_requestAccounts" })
+            provider = new ethers.providers.Web3Provider(window.ethereum)
+        }
+    }
 }
 
 // Use Infura Provider instead
@@ -20,4 +24,7 @@ else {
     )
 }
 
-export default provider
+// Export a function to get the provider
+export function getProvider() {
+    return provider
+}
