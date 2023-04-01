@@ -156,7 +156,7 @@ function useConfidences(ipfs_cid, initConfidences, interval = 4000) {
                 setConfidences(confidencesList.toString())
             } catch (error) {
                 console.log(error)
-                setConfidences(0)
+                setConfidences('0,0')
             }
         }
 
@@ -183,7 +183,7 @@ function useExpScores(ipfs_cid, initExpScores, interval = 4000) {
                 setExpScores(expScoresList.toString())
             } catch (error) {
                 console.log(error)
-                setExpScores(0)
+                setExpScores('0,0')
             }
         }
 
@@ -335,6 +335,9 @@ export default function FactCheck({
 
     function probitModel(trueVotes, confidences, expScores) {
         let weightedSum = 0
+
+        console.log("CONFIDENCES", confidences)
+        console.log("EXPSCORES", expScores)
 
         // parse confidences and expScores to an array
         const confidencesArray = confidences.split(',').map(Number)
@@ -761,8 +764,8 @@ export async function getServerSideProps(context) {
         initTrueVotes = "0"
         initFalseVotes = "0"
         initTotalVotes = "0"
-        initConfidences = "0"
-        initExpScores = "0"
+        initConfidences = "0,0"
+        initExpScores = "0,0"
     }
 
     console.log(session)

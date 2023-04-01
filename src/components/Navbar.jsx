@@ -7,7 +7,7 @@ import LoginModal from '@/components/LoginModal'
 
 const navigation = [
     { name: 'Fact Check', href: '/' },
-    // { name: 'Guides', href: '/guides' },
+    { name: 'Guides', href: '/guides' },
     { name: 'Submit Article', href: '/submit-article' },
 ]
 

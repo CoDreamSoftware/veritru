@@ -32,7 +32,7 @@ import { MdSpaceDashboard, MdArticle, MdNoteAdd, MdAccountCircle } from 'react-i
 import Avatar, { genConfig } from 'react-nice-avatar'
 
 const navigation = [
-    { name: 'Dashboard', href: '/dashboard', Icon: MdSpaceDashboard },
+    // { name: 'Dashboard', href: '/dashboard', Icon: MdSpaceDashboard },
     { name: 'Fact-Check', href: '/dashboard/factcheck', Icon: MdArticle },
     { name: 'Add Article', href: '/dashboard/factcheck/new', Icon: MdNoteAdd },
 ]

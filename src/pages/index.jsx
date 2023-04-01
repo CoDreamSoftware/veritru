@@ -7,7 +7,7 @@ export default function Home() {
     return (
         <HeroLayout>
             <div className="w-full h-screen md:h-screen bg-gradient-to-br from-red-200 to-cyan-200">
-                <div className="container py-32">
+                <div className="container py-32 mx-auto">
                     <div className="flex flex-col max-w-[20rem] lg:max-w-[45rem] md:py-16 mx-auto items-center">
                         <h1 className="sm:text-3xl text-2xl mb-4 font-bold text-gray-900">
                             VERIFY THE TRUTH
