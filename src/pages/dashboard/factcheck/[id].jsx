@@ -240,10 +240,11 @@ export default function FactCheck({
 
     function handleConfidenceChange(selectedValue) {
         setConfidence(selectedValue)
+        console.log("confidence change: ", selectedValue)
     }
 
     function handleSubmit(selectedVote) {
-        console.log(selectedVote)
+        console.log("selected vote: ", selectedVote)
         // Set the selected vote
         setSelectedVote(selectedVote)
         // Perform the validation check
@@ -760,6 +761,8 @@ export async function getServerSideProps(context) {
         initTrueVotes = "0"
         initFalseVotes = "0"
         initTotalVotes = "0"
+        initConfidences = "0"
+        initExpScores = "0"
     }
 
     console.log(session)
