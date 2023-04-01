@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import HeroLayout from "@/components/Layout"
 import Image from "next/image"
+import Link from "next/link"
 
 export default function Home() {
 
@@ -23,7 +24,7 @@ export default function Home() {
                             type="button" 
                             className=" text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-3 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 rounded-lg px-5 py-2.5 text-sm font-medium font-display"
                         >
-                            Learn More
+                            <Link href="/guides">Learn More</Link>
                         </button>
                     </div>
                 </div>

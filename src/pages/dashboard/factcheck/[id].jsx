@@ -60,7 +60,7 @@ const category = [
 ]
 
 // Custom use** Hook instead of using SWR - stale while revalidate
-function useTrueVotes(ipfs_cid, initTrueVotes, interval = 4000) {
+function useTrueVotes(ipfs_cid, initTrueVotes, interval = 5000) {
     const [trueVotes, setTrueVotes] = useState(initTrueVotes)
 
     useEffect(() => {
@@ -87,7 +87,7 @@ function useTrueVotes(ipfs_cid, initTrueVotes, interval = 4000) {
 }
 
 // Custom use** Hook instead of using SWR - stale while revalidate
-function useFalseVotes(ipfs_cid, initFalseVotes, interval = 4000) {
+function useFalseVotes(ipfs_cid, initFalseVotes, interval = 5000) {
     const [falseVotes, setFalseVotes] = useState(initFalseVotes)
 
     useEffect(() => {
@@ -114,7 +114,7 @@ function useFalseVotes(ipfs_cid, initFalseVotes, interval = 4000) {
 }
 
 // Custom use** Hook instead of using SWR - stale while revalidate
-function useTotalVotes(ipfs_cid, initTotalVotes, interval = 4000) {
+function useTotalVotes(ipfs_cid, initTotalVotes, interval = 5000) {
     const [totalVotes, setTotalVotes] = useState(initTotalVotes)
 
     useEffect(() => {
@@ -141,7 +141,7 @@ function useTotalVotes(ipfs_cid, initTotalVotes, interval = 4000) {
 }
 
 // Custom use** Hook instead of using SWR - stale while revalidate
-function useConfidences(ipfs_cid, initConfidences, interval = 4000) {
+function useConfidences(ipfs_cid, initConfidences, interval = 5000) {
     const [confidences, setConfidences] = useState(initConfidences)
 
     useEffect(() => {
@@ -168,7 +168,7 @@ function useConfidences(ipfs_cid, initConfidences, interval = 4000) {
 }
 
 // Custom use** Hook instead of using SWR - stale while revalidate
-function useExpScores(ipfs_cid, initExpScores, interval = 4000) {
+function useExpScores(ipfs_cid, initExpScores, interval = 5000) {
     const [expScores, setExpScores] = useState(initExpScores)
 
     useEffect(() => {
