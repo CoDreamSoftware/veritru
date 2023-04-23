@@ -117,7 +117,7 @@ export default function Sidebar({ serverSession }) {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center justify-start">
                         <Link href="/dashboard" className="flex flex-shrink-0">
-                            <Image src="/png/veritru-sq-white.png" className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" width="48" height="48" unoptimized priority />
+                            <Image src="/assets/png/veritru-sq-white.png" className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" width="48" height="48" unoptimized priority />
                             <span className="self-center whitespace-nowrap text-xl font-medium font-display active:text-cyan-500 hover:text-cyan-500 text-black dark:text-white ml-2">
                                 VERITRU
                             </span>
@@ -226,7 +226,7 @@ export default function Sidebar({ serverSession }) {
                 <div className="flex items-center justify-between">
                     <div className="flex items-center justify-start">
                         <Link href="/reviewer" className="flex flex-shrink-0">
-                            <Image src="/png/veritru-sq-white.png" className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" width="48" height="48" unoptimized priority />
+                            <Image src="/assets/png/veritru-sq-white.png" className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" width="48" height="48" unoptimized priority />
                             <span className="self-center whitespace-nowrap text-xl font-medium font-display active:text-cyan-500 hover:text-cyan-500 text-black dark:text-white ml-2">
                                 VERITRU
                             </span>

@@ -22,7 +22,7 @@ export default function Navbar() {
                     <div className="flex items-center h-20 w-full">
                         <div className="flex items-center mx-10 md:mx-20 justify-between w-full">
                             <Link href="/" className="flex justify-center items-center flex-shrink-0">
-                                <Image src="/png/veritru-sq-white.png" className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" width="48" height="48" unoptimized priority />
+                                <Image src="/assets/png/veritru-sq-white.png" className="w-12 h-12 sm:w-16 sm:h-16" alt="VeriTru Logo" width="48" height="48" unoptimized priority />
                                 <span className="self-center whitespace-nowrap text-xl font-medium font-display active:text-cyan-500 hover:text-cyan-500 text-black dark:text-white ml-2">
                                     VERITRU
                                 </span>
