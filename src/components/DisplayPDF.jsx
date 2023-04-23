@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { useRef, useState, useEffect, useLayoutEffect } from 'react'
-import { Document, Page, pdfjs } from 'react-pdf'
 import { Spinner } from '@chakra-ui/react'
 import { HiArrowLongLeft, HiArrowLongRight } from "react-icons/hi2"
+import { Document, Page, pdfjs } from 'react-pdf'
 import useResizeObserver from '@react-hook/resize-observer'
 
 pdfjs.GlobalWorkerOptions.workerSrc = '/worker/pdf.worker.min.js'
