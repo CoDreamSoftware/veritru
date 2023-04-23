@@ -8,7 +8,7 @@ export default function ArticlesTable({ id, article }) {
     return (
         <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
             <th scope="row" className="px-6 py-2 font-medium text-gray-900">
-                <div className="w-0">
+                <div className="w-5">
                     {id}
                 </div>
             </th>

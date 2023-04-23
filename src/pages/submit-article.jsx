@@ -138,8 +138,8 @@ export default function SubmitArticle() {
 
     return (
         <Layout>
-            <div className="h-screen flex items-center justify-center px-5 pt-32 pb-10">
-                <div className="mx-auto w-full max-w-[700px] p-10 h-full bg-white bg-opacity-40 backdrop-blur-lg rounded drop-shadow-lg">
+            <div className="h-full flex items-center justify-center px-5 pt-32 pb-10">
+                <div className="mx-auto w-full max-w-[700px] p-10 h-full bg-white">
                     <h2 className="font-display font-semibold text-base text-center mb-4 mx-2 text-gray-900 dark:text-white">
                         Article Submission
                     </h2>
