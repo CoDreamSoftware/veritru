@@ -45,8 +45,8 @@ const path = require("path")
 
 require('dotenv').config();
 const HDWalletProvider = require('@truffle/hdwallet-provider');
-const PRIVATE_KEY = process.env.PRIVATE_KEY
-const INFURA_API_KEY = process.env.INFURA_API_KEY
+const PRIVATE_KEY = "ef35f3db193aa592e84c3a116a2338275e603e3c27d35d263e4183269dda4070"
+const INFURA_API_KEY = "d5834dbbce814affbdcc7f0b985fb14b"
 const AccountIndex = 0
 
 module.exports = {

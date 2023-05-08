@@ -33,7 +33,7 @@ export default function DisplayPDF ({ cid }) {
         setLoading(true)
         async function fetchPdf() {
             try {
-                const res = await axios.get(`https://dweb.link/ipfs/${cid}`, {
+                const res = await axios.get(`https://cloudflare-ipfs.com/ipfs/${cid}`, {
                     responseType: 'blob',
                 })
                 setPdf(res.data)
